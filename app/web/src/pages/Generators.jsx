@@ -28,10 +28,10 @@ export default function Generators({ report, selected, select }) {
         <Section title={`${g.generator_id}: will it carry a ${oh} h blackout?`} kicker={`Protects ${g.units_covered.join(', ')}`} right={<Pill status={g.status} />}>
           <p className="reason">{g.reason}</p>
           <div className="tiles small">
-            <Tile label="P(starts on demand)" num={g.start.p_start} fmt={(v) => pct(v)} note={`${g.demands - g.start_failures} of ${g.demands} starts · 95% low ${pct(g.start.p_start_lower)}`} />
+            <Tile label="P(starts on demand)" num={g.start.p_start} fmt={(v) => pct(v)} tone={g.start.p_start >= 0.99 ? 'ok' : g.start.p_start >= 0.97 ? 'warn' : 'bad'} note={`${g.demands - g.start_failures} of ${g.demands} starts · 95% low ${pct(g.start.p_start_lower)}`} />
             <Tile label="Failure rate z(t) = λ̂" value={r.lambda_hat === 0 ? '0 /h' : `${num(r.lambda_hat * 1000, 2)} per 1000 h`} note={`${r.failures} failures in ${num(r.run_hours, 1)} run-hours · 95% up ${num(r.lambda_upper * 1000, 2)}`} />
-            <Tile label="MTTF (= MTBF, repaired)" value={r.mttf === null ? 'no failures yet' : `${num(r.mttf, 0)} h`} note={`95% lower bound ${num(r.mttf_lower, 0)} h`} />
-            <Tile label={`R(${oh} h) once running`} num={r.R_t} fmt={(v) => num(v, 3)} note={`95% low ${num(r.R_t_lower, 3)}`} />
+            <Tile label="MTTF (= MTBF, repaired)" value={r.mttf === null ? 'no failures yet' : `${num(r.mttf, 0)} h`} tone={r.mttf === null ? 'ok' : r.mttf < 200 ? 'bad' : 'ok'} note={`95% lower bound ${num(r.mttf_lower, 0)} h`} />
+            <Tile label={`R(${oh} h) once running`} num={r.R_t} fmt={(v) => num(v, 3)} tone={r.R_t >= 0.95 ? 'ok' : r.R_t >= 0.9 ? 'warn' : 'bad'} note={`95% low ${num(r.R_t_lower, 3)}`} />
             <Tile label="P(loss of cooling)" num={g.p_loss} fmt={(v) => pct(v)} note="1 − p_start × R(t)" tone={g.p_loss > 0.05 ? 'bad' : 'ok'} />
             <Tile label="Expected $ at risk" num={g.dollars_at_risk} fmt={usd} note={`of ${usd(g.inventory_value)} protected`} tone={g.dollars_at_risk > 10000 ? 'bad' : 'ok'} />
           </div>

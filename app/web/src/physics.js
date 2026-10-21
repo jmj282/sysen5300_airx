@@ -8,6 +8,25 @@ export const prefersReducedMotion = () =>
 
 const rand = (a, b) => a + Math.random() * (b - a)
 
+// Every running animation registers a cancel function here, so a new transition can stop the old one
+// cleanly (no half-dropped cards, no orphaned overlays).
+const running = new Set()
+
+/** Stop every running transition and put all cards back where they belong. */
+export function cancelAll(container) {
+  for (const cancel of [...running]) cancel()
+  running.clear()
+  document.querySelectorAll('.fx-overlay').forEach((o) => o.remove())
+  if (container) {
+    container.classList.remove('fx-hidden')
+    pieces(container).forEach((el) => {
+      el.style.transform = ''
+      el.style.willChange = ''
+      el.classList.remove('fx-moving')
+    })
+  }
+}
+
 /** Top-level animatable blocks inside a container (a tile or card that is not inside another one). */
 export function pieces(container) {
   if (!container) return []
@@ -72,6 +91,15 @@ export function shatterOut(container, { maxMs = 2200 } = {}) {
   return new Promise((resolve) => {
     const t0 = performance.now()
     let last = t0
+    let raf
+    const finish = () => {
+      cancelAnimationFrame(raf)
+      running.delete(finish)
+      Engine.clear(engine)
+      overlay.remove()
+      resolve()
+    }
+    running.add(finish)
     function step(now) {
       const dt = Math.min(32, now - last)
       last = now
@@ -84,13 +112,10 @@ export function shatterOut(container, { maxMs = 2200 } = {}) {
       }
       const t = now - t0
       if (t > maxMs * 0.7) overlay.style.opacity = String(Math.max(0, 1 - (t - maxMs * 0.7) / (maxMs * 0.3)))
-      if (onScreen === 0 || t > maxMs) {
-        Engine.clear(engine)
-        overlay.remove()
-        resolve()
-      } else requestAnimationFrame(step)
+      if (onScreen === 0 || t > maxMs) finish()
+      else raf = requestAnimationFrame(step)
     }
-    requestAnimationFrame(step)
+    raf = requestAnimationFrame(step)
   })
 }
 
@@ -118,6 +143,18 @@ export function dropIn(container, { stagger = 55 } = {}) {
   return new Promise((resolve) => {
     const t0 = performance.now()
     let last = t0
+    let raf
+    const finish = () => {
+      cancelAnimationFrame(raf)
+      running.delete(finish)
+      states.forEach((s) => {
+        s.el.style.transform = ''
+        s.el.style.willChange = ''
+        s.el.classList.remove('fx-moving')
+      })
+      resolve()
+    }
+    running.add(finish)
     function step(now) {
       const dt = Math.min(0.032, (now - last) / 1000)
       last = now
@@ -146,15 +183,9 @@ export function dropIn(container, { stagger = 55 } = {}) {
           s.el.style.transform = `translateY(${s.y}px) rotate(${s.a}deg)`
         }
       }
-      if (active === 0 || now - t0 > 4000) {
-        states.forEach((s) => {
-          s.el.style.transform = ''
-          s.el.style.willChange = ''
-          s.el.classList.remove('fx-moving')
-        })
-        resolve()
-      } else requestAnimationFrame(step)
+      if (active === 0 || now - t0 > 4000) finish()
+      else raf = requestAnimationFrame(step)
     }
-    requestAnimationFrame(step)
+    raf = requestAnimationFrame(step)
   })
 }

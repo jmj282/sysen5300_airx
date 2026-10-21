@@ -6,7 +6,7 @@ export function Pill({ status }) {
 
 const ICON = { Normal: '✓', Warning: '⚠', Critical: '⚡', Review: '?' }
 
-export function StatusRow({ id, title, reason, status, onClick, active, i = 0 }) {
+export function StatusRow({ id, title, reason, status, onClick, active, i = 0, visual = null }) {
   return (
     <button className={`status-row ${active ? 'active' : ''} s-${String(status).toLowerCase()}`} onClick={onClick} style={{ '--i': i }}>
       <span className={`icon ${String(status).toLowerCase()}`}>{ICON[status] || '•'}</span>
@@ -17,6 +17,7 @@ export function StatusRow({ id, title, reason, status, onClick, active, i = 0 })
         </b>
         <small>{reason}</small>
       </span>
+      {visual ? <span className="row-visual">{visual}</span> : null}
       <Pill status={status} />
     </button>
   )

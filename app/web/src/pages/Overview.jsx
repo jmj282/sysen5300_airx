@@ -1,4 +1,5 @@
 import { Section, StatusRow, Tile } from '../components/Common.jsx'
+import { LightBoard, SparkBars, Sparkline } from '../components/Lights.jsx'
 import { STATUS_ORDER, usd, when } from '../format.js'
 
 const UNIT_TITLE = { RBC: 'Red cell refrigerator', PLASMA: 'Plasma freezer', PLATELETS: 'Platelet incubator' }
@@ -6,8 +7,24 @@ const UNIT_TITLE = { RBC: 'Red cell refrigerator', PLASMA: 'Plasma freezer', PLA
 export default function Overview({ report, go }) {
   const o = report.overview
   const items = [
-    ...report.units.map((u) => ({ id: u.unit_id, title: UNIT_TITLE[u.unit_type], status: u.status, reason: u.reason, page: 'temperature' })),
-    ...report.generators.map((g) => ({ id: g.generator_id, title: 'Backup generator', status: g.status, reason: g.reason, page: 'generators' })),
+    ...report.units.map((u) => ({
+      id: u.unit_id,
+      title: UNIT_TITLE[u.unit_type],
+      kind: u.unit_type === 'RBC' ? 'red cells' : u.unit_type.toLowerCase(),
+      status: u.status,
+      reason: u.reason,
+      page: 'temperature',
+      visual: <Sparkline values={u.series.temp_c.slice(-42)} lower={u.spec.lower} upper={u.spec.upper} status={u.status} />,
+    })),
+    ...report.generators.map((g) => ({
+      id: g.generator_id,
+      title: 'Backup generator',
+      kind: 'generator',
+      status: g.status,
+      reason: g.reason,
+      page: 'generators',
+      visual: <SparkBars values={g.p_chart.p} signals={g.p_chart.signal} status={g.status} />,
+    })),
   ].sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status] || a.id.localeCompare(b.id))
 
   return (
@@ -36,8 +53,12 @@ export default function Overview({ report, go }) {
         />
       </div>
 
+      <Section title="Equipment light board" kicker="Every unit at a glance · click a light">
+        <LightBoard items={items} onPick={(it) => go(it.page, it.id)} />
+      </Section>
+
       <div className="grid-2">
-        <Section title="Equipment status" kicker="Measure → Analyze">
+        <Section title="Equipment status" kicker="Measure → Analyze · last 7 days">
           <div className="status-list">
             {items.map((it, i) => (
               <StatusRow key={it.id} {...it} i={i} onClick={() => go(it.page, it.id)} />

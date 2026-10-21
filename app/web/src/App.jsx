@@ -4,7 +4,7 @@ import Background from './components/Background.jsx'
 import Crawl from './components/Crawl.jsx'
 import Wind from './components/Wind.jsx'
 import DatasetPicker, { DATASET_THEME, DatasetSwitch } from './components/DatasetPicker.jsx'
-import { dropIn, pieces, prefersReducedMotion, shatterOut } from './physics.js'
+import { cancelAll, dropIn, pieces, prefersReducedMotion, shatterOut } from './physics.js'
 import Generators from './pages/Generators.jsx'
 import Methods from './pages/Methods.jsx'
 import Overview from './pages/Overview.jsx'
@@ -30,16 +30,24 @@ export default function App() {
   const [unit, setUnit] = useState(null)
   const [gen, setGen] = useState(null)
   const [busy, setBusy] = useState(false)
+  const [queuedId, setQueuedId] = useState(null)
   const mainRef = useRef(null)
-  const pendingDrop = useRef(false)
   const pickerRef = useRef(null)
+  // Refs (not state) for everything the switch logic reads, so rapid clicks see current values at once.
+  const lock = useRef(false) // a transition is running
+  const queued = useRef(null) // the latest click made while locked (last click wins)
+  const sourceRef = useRef('temperature_degradation')
+  const uploadRef = useRef(null)
+  const requestNo = useRef(0) // ignores out-of-order API responses
+  const dropDone = useRef(null) // resolves when the drop-in animation finishes
+  const pendingDrop = useRef(false)
 
   useEffect(() => {
     listDatasets().then(setDatasets).catch((e) => setError(e.message))
     load('temperature_degradation').then(apply).catch((e) => setError(e.message))
   }, [])
 
-  const load = (id) => (id === 'upload' ? Promise.resolve(uploadReport) : analyzeScenario(id))
+  const load = (id) => (id === 'upload' ? Promise.resolve(uploadRef.current) : analyzeScenario(id))
 
   function apply(r) {
     setReport(r)
@@ -47,39 +55,74 @@ export default function App() {
     setGen(firstAlert(r.generators, 'generator_id'))
   }
 
-  /** Switch dataset with the physics transition: old UI tumbles away, new UI drops in. */
-  async function switchTo(id, preloaded) {
-    if (busy || (id === source && !preloaded)) return
+  /**
+   * Ask to switch dataset. Safe to spam: only one transition runs at a time, and clicks made during a
+   * transition are debounced into one: the LAST requested dataset runs when the current one finishes.
+   */
+  function switchTo(id, preloaded) {
+    if (lock.current) {
+      queued.current = { id, preloaded }
+      setQueuedId(id === sourceRef.current ? null : id)
+      return
+    }
+    if (id === sourceRef.current && !preloaded) return
+    runSwitch(id, preloaded)
+  }
+
+  /** One full transition: old UI tumbles away (matter-js), data loads, new UI drops in on springs. */
+  async function runSwitch(id, preloaded) {
+    lock.current = true
     setBusy(true)
     setError(null)
-    const animate = !prefersReducedMotion() && mainRef.current && pieces(mainRef.current).length
+    const myRequest = ++requestNo.current
+    const main = mainRef.current
+    cancelAll(main) // stop anything still moving from a previous transition
+    const animate = !prefersReducedMotion() && main && pieces(main).length > 0
     try {
       const dataP = preloaded ? Promise.resolve(preloaded) : load(id)
       let fall = Promise.resolve()
       if (animate) {
-        fall = shatterOut(mainRef.current)
-        mainRef.current.classList.add('fx-hidden') // the clones are now on screen in its place
+        fall = shatterOut(main)
+        main.classList.add('fx-hidden') // the clones are on screen in its place
       }
       const [r] = await Promise.all([dataP, new Promise((res) => setTimeout(res, animate ? 650 : 0))])
-      pendingDrop.current = animate
+      if (myRequest !== requestNo.current) return // a newer request superseded this one
+      sourceRef.current = id
       setSource(id)
+      const dropped = new Promise((res) => {
+        dropDone.current = res
+      })
+      pendingDrop.current = animate
       apply(r)
-      await fall
+      if (animate) {
+        // Safety net: if the drop-in never starts, reveal the page anyway.
+        await Promise.race([Promise.all([fall, dropped]), new Promise((res) => setTimeout(res, 5000))])
+      }
     } catch (e) {
-      mainRef.current?.classList.remove('fx-hidden')
       setError(e.message)
     } finally {
+      main?.classList.remove('fx-hidden')
+      pendingDrop.current = false
+      lock.current = false
       setBusy(false)
+      const next = queued.current
+      queued.current = null
+      setQueuedId(null)
+      if (next && (next.id !== sourceRef.current || next.preloaded)) setTimeout(() => switchTo(next.id, next.preloaded), 120)
     }
   }
 
   // After the new report renders (before paint), launch the new cards from above.
   useLayoutEffect(() => {
-    if (!pendingDrop.current || !mainRef.current) return
+    if (!mainRef.current) return
+    if (!pendingDrop.current) {
+      dropDone.current?.()
+      return
+    }
     pendingDrop.current = false
     const main = mainRef.current
     main.classList.remove('fx-hidden')
-    dropIn(main)
+    dropIn(main).then(() => dropDone.current?.())
   }, [report])
 
   // Page (tab) changes: cards rise in, staggered.
@@ -102,6 +145,7 @@ export default function App() {
   }
 
   const onUpload = (r, name) => {
+    uploadRef.current = r
     setUploadReport(r)
     setUploadName(name)
     setPage('overview')
@@ -124,7 +168,7 @@ export default function App() {
             <small>Six Sigma monitoring for blood bank refrigeration and backup power</small>
           </div>
         </div>
-        {datasets.length ? <DatasetSwitch datasets={datasets} active={source} onPick={(id) => switchTo(id)} busy={busy} uploadName={uploadName} /> : null}
+        {datasets.length ? <DatasetSwitch datasets={datasets} active={source} queued={queuedId} onPick={(id) => switchTo(id)} busy={busy} uploadName={uploadName} /> : null}
       </header>
 
       <nav className="tabs">
@@ -148,7 +192,7 @@ export default function App() {
         ) : null}
         {page === 'overview' && datasets.length ? (
           <div ref={pickerRef}>
-            <DatasetPicker datasets={datasets} active={source} onPick={(id) => switchTo(id)} uploadName={uploadName} busy={busy} />
+            <DatasetPicker datasets={datasets} active={source} queued={queuedId} onPick={(id) => switchTo(id)} uploadName={uploadName} busy={busy} />
           </div>
         ) : null}
         {page === 'upload' ? <Upload onReport={onUpload} /> : null}

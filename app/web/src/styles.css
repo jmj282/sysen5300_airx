@@ -297,6 +297,88 @@ footer { position: relative; z-index: 1; margin-top: 32px; color: var(--muted); 
 .switch-btn:disabled { opacity: 0.5; cursor: wait; }
 .chapter { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
 
+/* ---------- status lights: green glows, amber blinks, red flashes ---------- */
+.lightboard { display: flex; flex-direction: column; gap: 12px; }
+.lb-legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; font-weight: 600; }
+.lb-count { display: inline-flex; align-items: center; gap: 7px; }
+.lb-count.good { color: #7ef0b6; } .lb-count.warn { color: var(--warn); } .lb-count.bad { color: var(--bad); } .lb-count.review { color: var(--review); }
+.led-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.led-dot.good { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+.led-dot.warn { background: var(--warn); box-shadow: 0 0 8px var(--warn); animation: ledBlink 1.2s steps(2, jump-none) infinite; }
+.led-dot.bad { background: var(--bad); box-shadow: 0 0 10px var(--bad); animation: strobe 0.7s infinite; }
+.led-dot.review { background: var(--review); box-shadow: 0 0 8px var(--review); }
+.lb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 10px; }
+.lb-cell { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 4px 10px; border-radius: 14px; border: 1px solid var(--line); background: rgba(0, 0, 0, 0.25); color: var(--text); font: inherit; cursor: pointer; transition: transform 0.25s var(--spring), border-color 0.25s, background 0.25s; animation: rise 0.6s var(--ease-out) both; animation-delay: calc(var(--i, 0) * 40ms + 100ms); }
+.lb-cell:hover { transform: translateY(-3px) scale(1.04); }
+.lb-cell b { font-size: 13px; }
+.lb-cell small { color: var(--muted); font-size: 10.5px; }
+.lb-cell.bad { border-color: rgba(255, 77, 94, 0.55); animation: rise 0.6s var(--ease-out) both, cellAlarm 1.1s ease-in-out 0.8s infinite; }
+.lb-cell.warn { border-color: rgba(255, 140, 66, 0.45); }
+.lb-cell.good:hover { border-color: rgba(46, 194, 126, 0.6); background: rgba(46, 194, 126, 0.08); }
+.led { position: relative; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; }
+.led-core { width: 22px; height: 22px; border-radius: 50%; position: relative; z-index: 1; }
+.led.good .led-core { background: radial-gradient(circle at 35% 30%, #d6ffe9, var(--ok) 45%, #0d6b40); box-shadow: 0 0 10px var(--ok), 0 0 24px rgba(46, 194, 126, 0.55); animation: breathe 2.8s ease-in-out infinite; }
+.led.warn .led-core { background: radial-gradient(circle at 35% 30%, #fff1d6, var(--warn) 45%, #8a3a06); box-shadow: 0 0 12px var(--warn), 0 0 26px rgba(255, 140, 66, 0.6); animation: ledBlink 1.2s steps(2, jump-none) infinite; }
+.led.review .led-core { background: radial-gradient(circle at 35% 30%, #efe3ff, var(--review) 45%, #4b2a8a); box-shadow: 0 0 10px var(--review); animation: breathe 2s ease-in-out infinite; }
+.led.bad .led-core { background: radial-gradient(circle at 35% 30%, #ffe0e3, var(--bad) 45%, #7a0715); box-shadow: 0 0 14px var(--bad), 0 0 34px rgba(255, 77, 94, 0.75); animation: strobe 0.7s infinite; }
+.siren { position: absolute; inset: -14px; border-radius: 50%; background: conic-gradient(from 0deg, rgba(255, 77, 94, 0.55), transparent 70deg, transparent 180deg, rgba(255, 77, 94, 0.55) 200deg, transparent 270deg); animation: sirenSpin 1.1s linear infinite; filter: blur(2px); }
+
+/* sparklines in status rows */
+.row-visual { flex: none; display: grid; place-items: center; opacity: 0.95; }
+.spark { overflow: visible; }
+.spark-spec { stroke: rgba(255, 77, 94, 0.45); stroke-dasharray: 2 2; stroke-width: 1; }
+.spark-line { fill: none; stroke-width: 1.6; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.4s var(--ease-out) 0.3s forwards; }
+.spark.good .spark-line { stroke: var(--ok); filter: drop-shadow(0 0 3px rgba(46, 194, 126, 0.8)); }
+.spark.warn .spark-line { stroke: var(--warn); filter: drop-shadow(0 0 3px rgba(255, 140, 66, 0.8)); }
+.spark.bad .spark-line { stroke: var(--bad); filter: drop-shadow(0 0 4px rgba(255, 77, 94, 0.9)); }
+.spark.review .spark-line { stroke: var(--review); }
+.spark-end { fill: #fff; }
+.spark.good .spark-end { fill: var(--ok); filter: drop-shadow(0 0 4px var(--ok)); animation: breathe 2.4s ease-in-out infinite; }
+.spark.bad .spark-end, .spark-bad { fill: var(--bad); animation: strobe 0.7s infinite; }
+.spark.warn .spark-end { fill: var(--warn); animation: ledBlink 1.2s steps(2, jump-none) infinite; }
+.spark-bar { fill: rgba(46, 194, 126, 0.6); }
+.spark.good .spark-bar { fill: var(--ok); filter: drop-shadow(0 0 2px rgba(46, 194, 126, 0.7)); }
+.spark-bar.bad { fill: var(--bad); filter: drop-shadow(0 0 4px var(--bad)); animation: strobe 0.8s infinite; }
+
+/* tiles: green glow when good, amber pulse when borderline, flashing red when bad */
+.tile.ok { box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(46, 194, 126, 0.25), 0 0 26px rgba(46, 194, 126, 0.16); animation: okGlow 3.2s ease-in-out infinite; }
+.tile.ok .tile-value { color: #b8ffd9; text-shadow: 0 0 14px rgba(46, 194, 126, 0.55); }
+.tile.warn { animation: warnPulse 1.6s ease-in-out infinite; }
+.tile.warn .tile-value { text-shadow: 0 0 14px rgba(255, 140, 66, 0.6); }
+.tile.bad { border-color: rgba(255, 77, 94, 0.6); animation: badFlash 1s ease-in-out infinite; }
+.tile.bad .tile-value { animation: valueFlicker 1s steps(1, end) infinite; }
+
+/* status rows */
+.status-row.s-critical { background: linear-gradient(90deg, rgba(255, 77, 94, 0.14), transparent 70%); animation: slideIn 0.6s var(--ease-out) both, rowAlarm 1.2s ease-in-out 0.7s infinite; }
+.status-row.s-warning { background: linear-gradient(90deg, rgba(255, 140, 66, 0.09), transparent 60%); }
+.icon.normal { box-shadow: 0 0 10px rgba(46, 194, 126, 0.45); animation: breathe 2.8s ease-in-out infinite; }
+.pill.normal { box-shadow: 0 0 12px rgba(46, 194, 126, 0.3); }
+.pill.critical { animation: badFlash 1s ease-in-out infinite; }
+.pill.warning { animation: warnPulse 1.6s ease-in-out infinite; }
+
+/* capability table + charts */
+td.good { text-shadow: 0 0 10px rgba(46, 194, 126, 0.7); }
+td.bad { animation: valueFlicker 1s steps(1, end) infinite; text-shadow: 0 0 10px rgba(255, 77, 94, 0.8); }
+.chart .pt.excursion.pop { animation: pop 0.45s var(--spring) both, ptFlash 0.8s ease-in-out 1.6s infinite; }
+.lead { animation: shimmerIn 1s var(--ease-out) both, warnPulse 2s ease-in-out 1s infinite; }
+
+/* dataset switch states */
+.ds-opt.queued, .switch-btn.queued { border-style: dashed; animation: warnPulse 1s ease-in-out infinite; }
+.switch-btn.queued { cursor: default; color: var(--gold); border-color: var(--gold); background: rgba(255, 209, 102, 0.1); }
+.ds-opt.leaving { opacity: 0.7; }
+
+@keyframes breathe { 0%, 100% { filter: brightness(0.9); } 50% { filter: brightness(1.35); } }
+@keyframes ledBlink { 0% { opacity: 1; } 100% { opacity: 0.35; } }
+@keyframes strobe { 0%, 100% { opacity: 1; filter: brightness(1.4); } 45% { opacity: 1; } 50% { opacity: 0.25; filter: brightness(0.7); } 95% { opacity: 0.25; } }
+@keyframes sirenSpin { to { transform: rotate(360deg); } }
+@keyframes cellAlarm { 0%, 100% { box-shadow: 0 0 0 rgba(255, 77, 94, 0); background: rgba(0, 0, 0, 0.25); } 50% { box-shadow: 0 0 26px rgba(255, 77, 94, 0.55); background: rgba(255, 77, 94, 0.14); } }
+@keyframes okGlow { 0%, 100% { box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(46, 194, 126, 0.2), 0 0 16px rgba(46, 194, 126, 0.1); } 50% { box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(46, 194, 126, 0.45), 0 0 34px rgba(46, 194, 126, 0.3); } }
+@keyframes warnPulse { 0%, 100% { box-shadow: 0 0 0 1px rgba(255, 140, 66, 0.25), 0 0 10px rgba(255, 140, 66, 0.1); } 50% { box-shadow: 0 0 0 1px rgba(255, 140, 66, 0.6), 0 0 26px rgba(255, 140, 66, 0.35); } }
+@keyframes badFlash { 0%, 100% { box-shadow: 0 0 0 1px rgba(255, 77, 94, 0.4), 0 0 12px rgba(255, 77, 94, 0.2); } 50% { box-shadow: 0 0 0 2px rgba(255, 77, 94, 0.95), 0 0 42px rgba(255, 77, 94, 0.65); } }
+@keyframes valueFlicker { 0% { opacity: 1; } 50% { opacity: 0.45; } }
+@keyframes rowAlarm { 0%, 100% { background-color: rgba(255, 77, 94, 0); } 50% { background-color: rgba(255, 77, 94, 0.12); } }
+@keyframes ptFlash { 0%, 100% { opacity: 1; r: 3.6px; } 50% { opacity: 0.3; r: 5px; } }
+
 /* ---------- AirX wind behind the logo ---------- */
 .brand { position: relative; isolation: isolate; }
 .brand > *:not(.wind) { position: relative; z-index: 1; }

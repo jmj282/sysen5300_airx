@@ -1,5 +1,6 @@
 import { ControlChart, MRChart } from '../components/Charts.jsx'
 import { HowToRead, Pill, Section, StatusRow } from '../components/Common.jsx'
+import { Sparkline } from '../components/Lights.jsx'
 import { num, specText, temp, when } from '../format.js'
 
 function Capability({ cap, recentPpk, spec }) {
@@ -64,6 +65,7 @@ export default function Temperature({ report, selected, select }) {
               status={u.status}
               active={u.unit_id === unit.unit_id}
               onClick={() => select(u.unit_id)}
+              visual={<Sparkline values={u.series.temp_c.slice(-42)} lower={u.spec.lower} upper={u.spec.upper} status={u.status} width={70} height={26} />}
             />
           ))}
         </div>

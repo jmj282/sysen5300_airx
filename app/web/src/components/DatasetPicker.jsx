@@ -10,7 +10,7 @@ export const DATASET_THEME = {
 
 const kb = (b) => `${(b / 1024).toFixed(b < 10240 ? 1 : 0)} KB`
 
-export default function DatasetPicker({ datasets, active, onPick, uploadName, busy }) {
+export default function DatasetPicker({ datasets, active, queued, onPick, uploadName, busy }) {
   return (
     <section className="datasets" aria-label="Choose a test dataset">
       <div className="datasets-head" data-fx>
@@ -36,7 +36,7 @@ export default function DatasetPicker({ datasets, active, onPick, uploadName, bu
               className={`dataset ${on ? 'on' : ''}`}
               style={{ '--ds': th.accent, '--ds2': th.accent2, animationDelay: `${i * 90}ms` }}
             >
-              <button className="dataset-main" onClick={() => onPick(d.id)} disabled={busy || on} aria-pressed={on}>
+              <button className="dataset-main" onClick={() => onPick(d.id)} disabled={on && !busy} aria-pressed={on}>
                 <span className="dataset-icon">{th.icon}</span>
                 <span className="dataset-text">
                   <span className="dataset-title">
@@ -55,8 +55,10 @@ export default function DatasetPicker({ datasets, active, onPick, uploadName, bu
               <div className="dataset-switch-row">
                 {on ? (
                   <span className="switch-btn current">✓ Currently viewing</span>
+                ) : queued === d.id ? (
+                  <span className="switch-btn queued">⏳ Up next…</span>
                 ) : (
-                  <button className="switch-btn" onClick={() => onPick(d.id)} disabled={busy}>
+                  <button className="switch-btn" onClick={() => onPick(d.id)}>
                     Switch to this dataset <span aria-hidden="true">→</span>
                   </button>
                 )}
@@ -77,7 +79,7 @@ export default function DatasetPicker({ datasets, active, onPick, uploadName, bu
         })}
         {uploadName ? (
           <article data-fx className={`dataset ${active === 'upload' ? 'on' : ''}`} style={{ '--ds': DATASET_THEME.upload.accent, '--ds2': DATASET_THEME.upload.accent2 }}>
-            <button className="dataset-main" onClick={() => onPick('upload')} disabled={busy || active === 'upload'} aria-pressed={active === 'upload'}>
+            <button className="dataset-main" onClick={() => onPick('upload')} disabled={active === 'upload' && !busy} aria-pressed={active === 'upload'}>
               <span className="dataset-icon">{DATASET_THEME.upload.icon}</span>
               <span className="dataset-text">
                 <span className="dataset-title">
@@ -96,7 +98,7 @@ export default function DatasetPicker({ datasets, active, onPick, uploadName, bu
 const SHORT = { normal_operation: 'Normal', temperature_degradation: 'Fridge failing', generator_failure: 'Generator failing' }
 
 /** Always-visible dataset switch in the header: one clear button per dataset. */
-export function DatasetSwitch({ datasets, active, onPick, busy, uploadName }) {
+export function DatasetSwitch({ datasets, active, queued, onPick, busy, uploadName }) {
   const options = [...datasets.map((d) => ({ id: d.id, title: SHORT[d.id] || d.title })), ...(uploadName ? [{ id: 'upload', title: 'Your upload' }] : [])]
   return (
     <div className="ds-switch" role="radiogroup" aria-label="Switch dataset">
@@ -109,11 +111,10 @@ export function DatasetSwitch({ datasets, active, onPick, busy, uploadName }) {
             key={o.id}
             role="radio"
             aria-checked={on}
-            className={`ds-opt ${on ? 'on' : ''}`}
+            className={`ds-opt ${on ? 'on' : ''} ${queued === o.id ? 'queued' : ''} ${busy && on ? 'leaving' : ''}`}
             style={{ '--ds': th.accent, '--ds2': th.accent2 }}
             onClick={() => onPick(o.id)}
-            disabled={busy}
-            title={on ? 'Currently viewing' : `Switch to ${o.title}`}
+            title={on ? 'Currently viewing' : queued === o.id ? 'Up next' : `Switch to ${o.title}`}
           >
             <span className="ds-opt-icon">{on ? <span className="pulse" /> : th.icon}</span>
             {o.title}
