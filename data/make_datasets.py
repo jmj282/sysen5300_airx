@@ -11,7 +11,7 @@ Planted signals (see data/README.md for the full codebook):
   normal_operation         nothing: every unit stable and in spec, both generators healthy
   temperature_degradation  R-04's compressor degrades from day 17 (a slow upward drift that crosses
                            6 C around day 24); R-07's set point shifts up 0.6 C on day 24 (still in spec)
-  generator_failure        G-02's starter degrades in the last two months: 7 failed starts in the last
+  generator_failure        G-02's starter degrades in the last two months: 8 failed starts in the last
                            90 days, including the 2026-10-06 blackout and the latest test on
                            2026-10-19, plus 2 run failures in its history; G-01 healthy
 
@@ -78,18 +78,23 @@ def temperatures(rng, scenario):
     return pd.DataFrame(rows, columns=["timestamp", "unit_id", "temp_c"])
 
 
-def generator_log(rng, gen_id, failing):
+def site_outages(rng):
+    """Real grid blackouts at the site, shared by both generators: about 6 a year, 1-12 hours long."""
+    n_out = rng.poisson(6 * 3)
+    days = sorted(rng.choice(pd.date_range(GEN_START, GEN_END, freq="D"), n_out, replace=False))
+    return [(pd.Timestamp(d), float(np.clip(rng.lognormal(1.2, 0.7), 1, 12))) for d in days]
+
+
+def generator_log(rng, gen_id, failing, outages):
     rows = []
     mondays = pd.date_range(GEN_START, GEN_END, freq="W-MON")
     first_mondays = [d for d in mondays if d.day <= 7]
-    # Real outages: about 6 a year, 1-12 hours long.
-    n_out = rng.poisson(6 * 3)
-    outage_days = sorted(rng.choice(pd.date_range(GEN_START, GEN_END, freq="D"), n_out, replace=False))
     events = [(d, "weekly_exercise", 0.25) for d in mondays]
     events += [(d, "monthly_load", 0.5) for d in first_mondays]
-    events += [(pd.Timestamp(d), "outage", float(np.clip(rng.lognormal(1.2, 0.7), 1, 12))) for d in outage_days]
-    if failing:
-        # The blackout that started it all: G-02 does not start (added explicitly so it is in the log).
+    events += [(d, "outage", hours) for d, hours in outages]
+    if not any(d == pd.Timestamp("2026-10-06") for d, _ in outages):
+        # The blackout that started it all (both generators see it; G-02 fails to start in the
+        # generator_failure scenario).
         events.append((pd.Timestamp("2026-10-06"), "outage", 6.0))
     events.sort(key=lambda e: (e[0], e[1]))
 
@@ -113,10 +118,11 @@ def generator_log(rng, gen_id, failing):
 
     df = pd.DataFrame(rows, columns=["test_date", "generator_id", "test_type", "started", "run_hours", "run_failure"])
     if failing:
-        # Two documented run failures: stopped 3 h into a May 2026 outage, and 0.2 h into a load test.
-        i = df.index[(df["test_type"] == "outage") & (df["started"] == 1) & (df["test_date"] >= "2026-04-01")]
+        # Two documented run failures: stopped 3 h into the most recent outage it started for (before
+        # the October blackout), and 0.2 h into the August 2026 load test.
+        i = df.index[(df["test_type"] == "outage") & (df["started"] == 1) & (df["test_date"] < "2026-10-01")]
         if len(i):
-            df.loc[i[0], ["run_hours", "run_failure"]] = [3.0, 1]
+            df.loc[i[-1], ["run_hours", "run_failure"]] = [3.0, 1]
         j = df.index[(df["test_type"] == "monthly_load") & (df["started"] == 1) & (df["test_date"] >= "2026-08-01")]
         if len(j):
             df.loc[j[0], ["run_hours", "run_failure"]] = [0.2, 1]
@@ -127,10 +133,11 @@ def build(scenario, seed):
     rng = np.random.default_rng(seed)
     units = pd.DataFrame(UNITS, columns=["unit_id", "unit_type", "backup_generator", "units_stored", "value_per_unit"])
     temps = temperatures(rng, scenario)
+    outages = site_outages(rng)
     gens = pd.concat(
         [
-            generator_log(rng, "G-01", failing=False),
-            generator_log(rng, "G-02", failing=(scenario == "generator_failure")),
+            generator_log(rng, "G-01", failing=False, outages=outages),
+            generator_log(rng, "G-02", failing=(scenario == "generator_failure"), outages=outages),
         ],
         ignore_index=True,
     )

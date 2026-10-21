@@ -49,8 +49,8 @@ export default function Generators({ report, selected, select }) {
             <HowToRead>
               Each point is the fraction of start demands (weekly tests, monthly load tests, real outages) that failed that quarter. p̄ ={' '}
               {pct(g.p_chart.pbar, 2)} comes from the baseline quarters before the shaded (judged) window, so a new problem can’t widen its own
-              limits; limits are p̄ ± 3√(p̄(1−p̄)/n) per quarter. Red = above its limit, a special cause (e.g. a dying battery). Quarters (about 15 demands) are the rational subgroup: with ~5 demands a month, one failure alone would breach a monthly limit.
-              {g.p_chart.small_n ? ' n·p̄ is still small, so the normal approximation is rough; we also report the exact start probability above.' : ''}
+              limits. Red = above its upper limit, a special cause (e.g. a dying battery). Quarters (about 16 demands) are the rational subgroup.
+              {g.p_chart.small_n ? ' Failures are rare (n·p̄ < 5), so the usual p̄ ± 3√(p̄(1−p̄)/n) limits would flag a single failure; the limits here are exact binomial probability limits with the same 0.135% false-alarm tail as 3σ.' : ' Limits: p̄ ± 3√(p̄(1−p̄)/n).'}
             </HowToRead>
           </Section>
           <Section title="Reliability vs outage length" kicker="Exponential R(t) = e^(−λt)">

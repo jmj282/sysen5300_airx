@@ -173,14 +173,19 @@ the load? Failures per quarter are binomial counts → **p-chart** (quarters, ab
 |---|---|
 | p_i | failed starts / demands in quarter i |
 | p̄ | Σ failures / Σ demands over the **baseline** months (everything before the last 90 days, if there are at least 4 such quarters) |
-| limits | p̄ ± 3·√(p̄(1 − p̄)/n_i), per quarter, clipped to [0, 1] |
+| limits | p̄ ± 3·√(p̄(1 − p̄)/n_i), per quarter, clipped to [0, 1], when n·p̄ ≥ 5; otherwise **exact binomial probability limits** with the same 0.135% one-sided tail as 3σ |
 
 **Course status:** taught (9/22 lecture, `ggp()`). Note the glossary wrongly says p-charts aren't covered;
 the slides and code teach them. Don't copy `00_p_charts.R:57`, which divides by Σn.
 
-**Small-n caveat:** even with ~15 tests a quarter, n·p̄ is small, so the normal approximation is weak. The course's
-fallback ("if the binomial assumptions fail, use the X chart") is noted in the UI, and we also report the
-plain failure-on-demand probability with a binomial interval.
+**Small-n fix:** a generator fails to start well under 1% of the time, so even a quarter (≈16 demands)
+has n·p̄ far below 5. The normal approximation behind p̄ ± 3σ then breaks down: a **single** failure
+lands above the upper limit, a false alarm on a healthy generator. Following the course's rule (change
+the chart when the binomial assumptions behind it fail), the tool switches automatically to **exact
+binomial probability limits**: the upper limit is the largest failure count with P(X > k) ≤ 0.135%, the
+same false-alarm tail as a 3-sigma limit. One failure in 16 is then ordinary (it happens ~8% of the time);
+four failures in 16 is a signal. The tool also reports the plain start probability with an exact
+(Clopper-Pearson) lower bound.
 
 **Known answer:** `ggp` docstring inventory data: p̄ = 0.067929, upper limit at n = 100 is 0.1434.
 

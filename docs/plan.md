@@ -14,13 +14,18 @@ This file says *how* and *in what order*; SIX_SIGMA_METHODS says *which statisti
 
 ---
 
+> **Status 2026-10-21:** built. See [`docs/HANDOFF.md`](HANDOFF.md) for what is done, how to run it,
+> and the decisions made while building (they refine this plan: a third input file `units.csv`, a
+> confirmed-signal status policy, and a quarterly p chart with exact binomial limits).
+
 ## 1. Product in one paragraph
 
 **User:** the blood bank's **storage and quality technician**, the person who already writes down every
 fridge temperature each shift and signs off on the monthly generator test.
 **Decision:** at each shift change, *which refrigeration unit needs service or an inventory move before
 it goes out of spec, and is backup power reliable enough to ride out the next blackout?*
-**Inputs:** two CSV logs they already keep on paper (a temperature log and a generator test log). No
+**Inputs:** CSV logs they already keep on paper: a temperature log, a generator test log, and a short
+inventory list (`units.csv`). No
 sensors or telemetry needed, which is the Devpost "data collection challenge".
 **Outputs:** a status for every unit (Normal / Warning / Critical) with the Six Sigma reason (which run
 rule, which limit), I-MR charts, capability indices with CIs, a generator p-chart and reliability curve,
@@ -66,8 +71,9 @@ Both `app/api` and `app/web` keep the four-script contract (`testme`, `manifestm
 | `specs.py` | `STORAGE_SPECS` | RBC 1–6, plasma ≤ −18, platelets 20–24 °C | spec limits (cited) |
 | `analyze.py` | `analyze_unit(df, unit_type)`, `analyze_generators(df)`, `analyze_dataset(temp_df, gen_df)` | full status JSON the API returns | ties it together |
 
-**Status logic (per fridge):** Critical = any reading outside spec (an excursion). Warning = any run rule
-1–5 fired in the last 7 days. Review = rules 6–8. Normal = otherwise. Every status carries its reason
+**Status logic (per fridge):** Critical = any reading outside spec in the last 7 days (an excursion).
+Warning = ≥3 readings with a rule 1–5 signal in the last 24 h (confirmed signal; see SIX_SIGMA_METHODS
+§2b). Review = the same for rules 6–8. Normal = otherwise. Every status carries its reason
 text, e.g. "Rule 5: six readings in a row increasing (4.1 → 5.2 °C)".
 
 **Status logic (per generator):** Critical = failed its most recent start test, or a p-chart point above

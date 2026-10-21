@@ -162,7 +162,7 @@ def run_rules(x, center, sigma_s):
     return hits
 
 
-def p_chart(failures, demands, baseline=None):
+def p_chart(failures, demands, baseline=None, method="auto"):
     """p chart (fraction defective) for generator start tests, one point per period.
 
     p_i = failures_i / demands_i, pbar = sum(failures) / sum(demands) over the BASELINE periods,
@@ -172,6 +172,10 @@ def p_chart(failures, demands, baseline=None):
     Parameters
     ----------
     failures, demands : array-like of int, same length. demands must be > 0.
+    method : "normal" (the course's pbar +/- 3 sigma), "exact" (binomial probability limits with the
+        same 0.135% tail per side as 3 sigma), or "auto" (exact when n * pbar < 5, where the normal
+        approximation behind 3-sigma limits breaks down; the course's decision tree says to change
+        charts when the binomial assumptions fail).
     baseline : optional array-like of bool, same length. Periods used to estimate pbar (phase I).
         Default: all periods. Use the history before the period you are judging, so a new problem
         cannot inflate its own limits.
@@ -196,16 +200,27 @@ def p_chart(failures, demands, baseline=None):
         raise ValueError("baseline must be the same length as failures and include at least one period.")
     pbar = float(f[b].sum() / n[b].sum())
     p = f / n
-    se = np.sqrt(pbar * (1 - pbar) / n)
-    upper = np.minimum(1.0, pbar + 3 * se)
-    lower = np.maximum(0.0, pbar - 3 * se)
+    small_n = bool(np.median(n) * pbar < 5)
+    use_exact = method == "exact" or (method == "auto" and small_n)
+    if use_exact:
+        from scipy.stats import binom
+
+        tail = 0.00135  # one-sided tail of a 3-sigma limit
+        # Upper limit = largest count still "expected" (P(X > k) <= tail); a point signals above it.
+        upper = np.array([binom.ppf(1 - tail, int(ni), pbar) / ni for ni in n])
+        lower = np.array([max(binom.ppf(tail, int(ni), pbar) - 1, 0) / ni for ni in n])
+    else:
+        se = np.sqrt(pbar * (1 - pbar) / n)
+        upper = np.minimum(1.0, pbar + 3 * se)
+        lower = np.maximum(0.0, pbar - 3 * se)
     signal = (p > upper + 1e-12) | (p < lower - 1e-12)
     return {
+        "method": "exact binomial" if use_exact else "normal (3 sigma)",
         "pbar": pbar,
         "p": p.tolist(),
         "upper": upper.tolist(),
         "lower": lower.tolist(),
         "signal": signal.tolist(),
         "baseline": b.tolist(),
-        "small_n": bool(np.median(n) * pbar < 5),
+        "small_n": small_n,
     }

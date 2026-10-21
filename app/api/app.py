@@ -176,10 +176,10 @@ async def capability_endpoint(req: CapabilityRequest):
 
 
 class GeneratorRequest(BaseModel):
-    starts: int = Field(..., description="Successful starts", examples=[208])
-    demands: int = Field(..., description="Start attempts (tests + real outages)", examples=[217])
+    starts: int = Field(..., description="Successful starts", examples=[195])
+    demands: int = Field(..., description="Start attempts (tests + real outages)", examples=[204])
     run_failures: int = Field(..., description="Failures while running", examples=[2])
-    run_hours: float = Field(..., description="Total hours run", examples=[145.8])
+    run_hours: float = Field(..., description="Total hours run", examples=[99.0])
     outage_hours: float = Field(8.0, description="Blackout length to plan for")
     inventory_value: float = Field(0.0, description="Dollar value of blood this generator protects")
 

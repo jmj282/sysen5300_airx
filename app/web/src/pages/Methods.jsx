@@ -27,8 +27,8 @@ const METHODS = [
   {
     k: 'p chart',
     q: 'Is a generator failing to START more often than usual?',
-    f: 'p̄ = Σ failures / Σ demands,  limits = p̄ ± 3√(p̄(1−p̄)/nᵢ)',
-    why: 'Each weekly test, monthly load test and real outage is a pass/fail demand: binomial counts, an attribute chart. One point per quarter (about 15 demands) so a single failure is not a false alarm; p̄ comes from the quarters before the last 90 days.',
+    f: 'p̄ = Σ failures / Σ demands (baseline quarters),  limits = p̄ ± 3√(p̄(1−p̄)/nᵢ), or exact binomial limits when n·p̄ < 5',
+    why: 'Each weekly test, monthly load test and real outage is a pass/fail demand: binomial counts, an attribute chart. One point per quarter (about 16 demands); p̄ comes from the quarters before the last 90 days. Failures are rare, so the normal approximation fails and we use exact binomial probability limits with the same 0.135% tail as 3σ (the course’s rule: change the chart when the binomial-normal assumptions fail).',
     link: 'statistical-process-control-in-python.html',
   },
   {

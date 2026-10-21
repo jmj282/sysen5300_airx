@@ -132,14 +132,14 @@ def test_in_control_sample_rarely_fires_rule1():
 def test_p_chart_course_inventory_example():
     # ggp() docstring "inventory" data: 104 defects in 1531 items over 17 weeks, pbar = 0.067929,
     # and a week with n = 100 has an upper limit of 0.1434 (Lesson 5, slide 45).
-    pc = spc.p_chart([7, 97], [100, 1431])
+    pc = spc.p_chart([7, 97], [100, 1431], method="normal")
     assert pc["pbar"] == pytest.approx(0.067929, abs=1e-6)
     assert pc["upper"][0] == pytest.approx(0.1434, abs=1e-4)
     assert pc["lower"][0] == 0.0
 
 
 def test_p_chart_limits_per_period_and_signal():
-    pc = spc.p_chart([0, 0, 0, 0, 3], [5, 5, 5, 5, 5])
+    pc = spc.p_chart([0, 0, 0, 0, 3], [5, 5, 5, 5, 5], method="normal")
     assert pc["pbar"] == pytest.approx(3 / 25)
     se = np.sqrt(0.12 * 0.88 / 5)
     assert pc["upper"][0] == pytest.approx(0.12 + 3 * se)
@@ -149,11 +149,27 @@ def test_p_chart_limits_per_period_and_signal():
 
 def test_p_chart_baseline_keeps_new_problem_out_of_its_own_limits():
     f, n = [0, 0, 0, 0, 0, 1, 3], [5, 5, 5, 5, 5, 5, 5]
-    pooled = spc.p_chart(f, n)
-    phased = spc.p_chart(f, n, baseline=[True] * 5 + [False, False])
+    pooled = spc.p_chart(f, n, method="normal")
+    phased = spc.p_chart(f, n, baseline=[True] * 5 + [False, False], method="normal")
     assert pooled["pbar"] == pytest.approx(4 / 35)
     assert phased["pbar"] == 0  # the baseline months were clean
     assert phased["signal"][-1] and phased["signal"][-2]
+
+
+def test_p_chart_exact_limits_for_rare_failures():
+    # pbar 0.55%, 16 demands: one failure is NOT a signal (it happens 8% of the time by chance),
+    # but four failures are (probability far below the 0.135% 3-sigma tail).
+    f = [0] * 10 + [1, 4]
+    n = [16] * 12
+    base = [True] * 10 + [False, False]
+    pc = spc.p_chart([0] * 9 + [1] + f[10:], n, baseline=base)  # baseline: 1 failure in 160 demands
+    assert pc["small_n"] and pc["method"] == "exact binomial"
+    assert pc["pbar"] == pytest.approx(1 / 160)
+    assert not pc["signal"][9]
+    assert pc["signal"][-1]
+    from scipy.stats import binom
+
+    assert binom.sf(pc["upper"][-1] * 16, 16, 1 / 160) <= 0.00135  # P(X > upper count) is in the 3-sigma tail
 
 
 def test_p_chart_degenerate_no_failures():
