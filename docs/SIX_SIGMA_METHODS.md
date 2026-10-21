@@ -91,6 +91,28 @@ Any of these is **special cause** variation. Never call a pattern "common cause"
 **Course status:** taught (9/22 lecture, Lesson 5 slide 60). No run-rule code exists upstream, so ours is
 original and needs a planted-signal test for every rule.
 
+### 2b. Confirmed-signal policy: managing the false-alarm rate
+
+Running all the run rules on every reading is noisy. Each rule adds its own false-alarm chance (rule 1
+alone is about 0.27% per point; rule 4 alone is about 0.8%). We simulated healthy RBC fridges
+(`N(4, 0.3)`, rounded to 0.1 C, 14-day baseline, readings every 4 h):
+
+| Alert policy | Healthy unit shows a warning (per check) | 2-sigma shift caught within 24 h | Lead time before a drifting unit leaves spec (median) |
+|---|---|---|---|
+| Any rule 1-5 hit in the last 7 days | **48%** | ~100% | 120 h |
+| Any rule 1-5 hit in the last 24 h | 10.6% | — | 120 h |
+| **≥ 3 readings with a rule 1-5 signal in the last 24 h (our policy)** | **1.2%** | **97%** | **108 h** |
+
+So the tool **changes a unit's status only on a confirmed signal**: at least 3 signalling readings in the
+last 24 hours (both are parameters: `confirm_count`, `confirm_hours`). Every individual signal still shows
+on the chart and in the API's `hits` list. This is the course's average-run-length trade-off (sensitivity
+vs. false alarms) made explicit. An excursion outside the **spec** limits is never delayed; it makes the
+unit Critical immediately.
+
+The same policy decides whether a unit's 14-day **baseline** is stable. With ~84 baseline readings,
+about 1 healthy unit in 6 still shows a confirmed false alarm. For those units the tool shows Cp/Cpk
+with a caution note rather than hiding them.
+
 ---
 
 ## 3. Control limits vs specification limits (stable vs capable)
