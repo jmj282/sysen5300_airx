@@ -147,6 +147,15 @@ def test_p_chart_limits_per_period_and_signal():
     assert pc["signal"] == [False, False, False, False, True]
 
 
+def test_p_chart_baseline_keeps_new_problem_out_of_its_own_limits():
+    f, n = [0, 0, 0, 0, 0, 1, 3], [5, 5, 5, 5, 5, 5, 5]
+    pooled = spc.p_chart(f, n)
+    phased = spc.p_chart(f, n, baseline=[True] * 5 + [False, False])
+    assert pooled["pbar"] == pytest.approx(4 / 35)
+    assert phased["pbar"] == 0  # the baseline months were clean
+    assert phased["signal"][-1] and phased["signal"][-2]
+
+
 def test_p_chart_degenerate_no_failures():
     pc = spc.p_chart([0, 0, 0], [5, 5, 5])
     assert pc["pbar"] == 0 and pc["upper"] == [0, 0, 0] and not any(pc["signal"])

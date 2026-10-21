@@ -167,18 +167,18 @@ onsen.csv Cp = 0.67131, 95% CI [0.5958, 0.7468].
 ## 5. Generators: start tests as an attribute (p) chart
 
 Every weekly/monthly test (and every real outage) is a **demand**: did the generator start and carry
-the load? Failures per month are binomial counts → **p-chart**.
+the load? Failures per quarter are binomial counts → **p-chart** (quarters, about 15 demands each, are the rational subgroup: with ~5 demands a month and p̄ ≈ 1%, a single failure would breach a monthly limit).
 
 | Quantity | Course formula |
 |---|---|
-| p_i | failed starts / demands in month i |
-| p̄ | Σ failures / Σ demands |
-| limits | p̄ ± 3·√(p̄(1 − p̄)/n_i), per month, clipped to [0, 1] |
+| p_i | failed starts / demands in quarter i |
+| p̄ | Σ failures / Σ demands over the **baseline** months (everything before the last 90 days, if there are at least 4 such quarters) |
+| limits | p̄ ± 3·√(p̄(1 − p̄)/n_i), per quarter, clipped to [0, 1] |
 
 **Course status:** taught (9/22 lecture, `ggp()`). Note the glossary wrongly says p-charts aren't covered;
 the slides and code teach them. Don't copy `00_p_charts.R:57`, which divides by Σn.
 
-**Small-n caveat:** with ~5 tests a month, n·p̄ is tiny, so the normal approximation is weak. The course's
+**Small-n caveat:** even with ~15 tests a quarter, n·p̄ is small, so the normal approximation is weak. The course's
 fallback ("if the binomial assumptions fail, use the X chart") is noted in the UI, and we also report the
 plain failure-on-demand probability with a binomial interval.
 

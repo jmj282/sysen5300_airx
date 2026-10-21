@@ -48,7 +48,7 @@ def test_generator_failure_flags_g02_with_p_chart_signal():
     s = status(r)
     assert s["G-02"] == "Critical" and s["G-01"] == "Normal"
     g2 = next(g for g in r["generators"] if g["generator_id"] == "G-02")
-    assert any(g2["p_chart"]["signal"][-2:])  # the last two months signal
+    assert any(g2["p_chart"]["signal"][-2:])  # the last two quarters signal
     assert g2["running"]["failures"] == 2
     assert g2["p_backup"] < 0.95
     assert g2["dollars_at_risk"] > 10_000  # "thousands of dollars of supply" from the prompt

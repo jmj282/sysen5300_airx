@@ -162,16 +162,19 @@ def run_rules(x, center, sigma_s):
     return hits
 
 
-def p_chart(failures, demands):
+def p_chart(failures, demands, baseline=None):
     """p chart (fraction defective) for generator start tests, one point per period.
 
-    p_i = failures_i / demands_i, pbar = sum(failures) / sum(demands),
+    p_i = failures_i / demands_i, pbar = sum(failures) / sum(demands) over the BASELINE periods,
     limits = pbar +/- 3 * sqrt(pbar * (1 - pbar) / n_i), computed per period and clipped to [0, 1].
     (Course: ggp() in functions_process_control.py; Lesson 5 slide 45.)
 
     Parameters
     ----------
     failures, demands : array-like of int, same length. demands must be > 0.
+    baseline : optional array-like of bool, same length. Periods used to estimate pbar (phase I).
+        Default: all periods. Use the history before the period you are judging, so a new problem
+        cannot inflate its own limits.
 
     Returns
     -------
@@ -188,7 +191,10 @@ def p_chart(failures, demands):
         raise ValueError("Every period needs at least one demand (test or outage).")
     if np.any(f > n) or np.any(f < 0):
         raise ValueError("failures must be between 0 and demands.")
-    pbar = float(f.sum() / n.sum())
+    b = np.ones(f.shape, dtype=bool) if baseline is None else np.asarray(baseline, dtype=bool)
+    if b.shape != f.shape or not b.any():
+        raise ValueError("baseline must be the same length as failures and include at least one period.")
+    pbar = float(f[b].sum() / n[b].sum())
     p = f / n
     se = np.sqrt(pbar * (1 - pbar) / n)
     upper = np.minimum(1.0, pbar + 3 * se)
@@ -200,5 +206,6 @@ def p_chart(failures, demands):
         "upper": upper.tolist(),
         "lower": lower.tolist(),
         "signal": signal.tolist(),
+        "baseline": b.tolist(),
         "small_n": bool(np.median(n) * pbar < 5),
     }

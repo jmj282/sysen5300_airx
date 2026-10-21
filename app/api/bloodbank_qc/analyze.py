@@ -213,14 +213,21 @@ def analyze_generator(log, params=None):
     starts = int(g["started"].sum())
     start_failures = demands - starts
 
-    month = g["test_date"].dt.to_period("M")
+    # Rational subgroups: calendar QUARTERS (about 15 start demands each). With ~5 demands a month and
+    # pbar near 1%, a single failure would breach a monthly limit, so monthly points false-alarm.
+    month = g["test_date"].dt.to_period("Q")
     monthly = g.assign(month=month, fail=1 - g["started"]).groupby("month").agg(
         failures=("fail", "sum"), demands=("fail", "size")
     )
-    pc = spc.p_chart(monthly["failures"].to_numpy(), monthly["demands"].to_numpy())
     months = [str(m) for m in monthly.index]
     last_day = g["test_date"].iloc[-1]
-    recent_cut = (last_day - pd.Timedelta(days=p["recent_test_days"])).to_period("M")
+    recent_cut = (last_day - pd.Timedelta(days=p["recent_test_days"])).to_period("Q")
+    # Phase I for the p chart: pbar from the quarters BEFORE the recent window being judged (if we have
+    # at least 4 of them), so a new problem cannot inflate its own control limits.
+    base = np.asarray(monthly.index < recent_cut)
+    if base.sum() < 4:
+        base = np.ones(len(monthly), dtype=bool)
+    pc = spc.p_chart(monthly["failures"].to_numpy(), monthly["demands"].to_numpy(), baseline=base)
     recent_signal = [
         months[i] for i, s in enumerate(pc["signal"]) if s and monthly.index[i] >= recent_cut and pc["p"][i] > pc["pbar"]
     ]
@@ -238,7 +245,7 @@ def analyze_generator(log, params=None):
     if last["started"] == 0:
         status, reason = "Critical", f"Latest recorded start test ({last['test_date'].date()}) failed"
     elif recent_signal:
-        status, reason = "Critical", "p chart signal: start-failure fraction above its control limit in " + ", ".join(recent_signal)
+        status, reason = "Critical", "p chart signal: start-failure fraction above its control limit in quarter " + ", ".join(recent_signal)
     elif p_backup < p["backup_target"]:
         status, reason = (
             "Warning",
@@ -258,7 +265,7 @@ def analyze_generator(log, params=None):
         "p_backup": p_backup,
         "p_backup_lower": p_backup_lower,
         "p_loss": 1 - p_backup,
-        "p_chart": {"month": months, "failures": monthly["failures"].tolist(), "demands": monthly["demands"].tolist(), **pc},
+        "p_chart": {"period": months, "failures": monthly["failures"].tolist(), "demands": monthly["demands"].tolist(), **pc},
         "reliability_curve": _curve(sp["p_start"], rel),
         "tests": [
             {
