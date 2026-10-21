@@ -16,3 +16,8 @@ __pycache__/
 # operating-system clutter
 .DS_Store
 Thumbs.db
+
+# AirX: scenario copy made by app/api/manifestme.sh for deployment (source of truth is data/)
+app/api/data/
+node_modules/
+dist/
