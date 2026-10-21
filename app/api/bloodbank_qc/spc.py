@@ -1,7 +1,6 @@
 """Statistical process control (SPC) for refrigeration units and generator start tests.
 
-Course: SYSEN 5300 (Fraser), "Statistical Process Control in Python"
-https://timothyfraser.com/sigma/chapters/statistical-process-control-in-python.html
+Course: SYSEN 5300 (Fraser), chapter "Statistical Process Control in Python".
 Lesson 5 slides (I chart, MR chart, the 8 visual tests, p chart).
 
 Control limits answer "is the process STABLE?" They come from the process's own baseline data.

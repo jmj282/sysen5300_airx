@@ -1,7 +1,6 @@
 """System reliability: will the blood stay cold through a blackout?
 
-Course: "System Reliability in Python" (SYSEN 5300, Fraser)
-https://timothyfraser.com/sigma/chapters/system-reliability-in-python.html
+Course: SYSEN 5300 (Fraser), chapter "System Reliability in Python".
 
 Block diagram (solve inside out, as the course teaches):
 

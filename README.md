@@ -24,16 +24,27 @@ Every number comes from a tested Python library built on the SYSEN 5300 course m
 
 ---
 
-## Quick start (one command each)
+## ▶ Run it on your computer (2 steps)
+
+You need **Python 3.10+** ([download](https://www.python.org/downloads/)) and **Node.js 20+**
+([download](https://nodejs.org/)). Then, in a terminal:
 
 ```bash
-git clone https://github.com/jmj282/sysen5300_airx.git && cd sysen5300_airx
-app/api/testme.sh      # creates .venv, runs the 57 tests, starts the API on http://localhost:8000
-app/web/testme.sh      # in a second terminal (Node 20+): the dashboard on http://localhost:5173
+git clone https://github.com/jmj282/sysen5300_airx.git
+cd sysen5300_airx && ./start.sh
 ```
 
-Then pick a scenario in the **Data** menu. No front end? Open **http://localhost:8000/docs**: every
-endpoint is runnable there. **Live URL:** *pending deployment (see [docs/OPEN_QUESTIONS.md](docs/OPEN_QUESTIONS.md), Q1).*
+That's it. The first run installs everything (about 1–2 minutes), then your browser opens the dashboard
+at **http://localhost:5173**. Press **Ctrl+C** in the terminal to stop it. Run `./start.sh` again any
+time; later starts take a few seconds.
+
+- **Windows:** run the same two lines in **Git Bash** (installed with [Git for Windows](https://git-scm.com/download/win)).
+- **Try it:** use the **Dataset** buttons at the top to switch between the three test datasets, then
+  open the Temperature and Generators tabs. Every dataset can be downloaded from its card on the Overview.
+- **Just the API?** Open **http://localhost:8000/docs** while it runs: every endpoint is runnable there.
+- **Run the tests:** `app/api/testme.sh` (57 statistics tests, then the API alone on port 8000).
+
+**Live URL:** *pending deployment (see [docs/OPEN_QUESTIONS.md](docs/OPEN_QUESTIONS.md), Q1).*
 
 ## The Six Sigma behind it (DMAIC)
 
@@ -110,7 +121,7 @@ SixSigma_README.md       the original event README (rules, links)
 ## Credits
 
 Team AirX: Owyn Adams, Jake Janish, Roman Nagirniak, Nkenna Opara, Carter Perun.
-Methods from SYSEN 5300 (Dr. Timothy Fraser, Cornell): [textbook](https://timothyfraser.com/sigma/) ·
+Methods from the SYSEN 5300 course textbook (Dr. Timothy Fraser, Cornell) ·
 [course code](https://github.com/timothyfraser/sysen) · [hackathon repo](https://github.com/timothyfraser/sixsigmahackathon).
 Two course datasets (`daily_production.csv`, `onsen.csv`) are copied into `app/api/tests/fixtures/` as
 known-answer checks. Built with AI coding assistance (allowed and encouraged for the hackathon); the team

@@ -52,6 +52,15 @@ export default function DatasetPicker({ datasets, active, onPick, uploadName, bu
               <p className="dataset-expect">
                 <b>Expect:</b> {d.expect}
               </p>
+              <div className="dataset-switch-row">
+                {on ? (
+                  <span className="switch-btn current">✓ Currently viewing</span>
+                ) : (
+                  <button className="switch-btn" onClick={() => onPick(d.id)} disabled={busy}>
+                    Switch to this dataset <span aria-hidden="true">→</span>
+                  </button>
+                )}
+              </div>
               <div className="dataset-files">
                 <a className="dl-all" href={`${API_URL}/datasets/${d.id}.zip`} download>
                   ⤓ Download all (zip)
@@ -84,16 +93,33 @@ export default function DatasetPicker({ datasets, active, onPick, uploadName, bu
   )
 }
 
-/** Compact "you are looking at" banner shown on every page. */
-export function ViewingBanner({ dataset, uploadName, onChange }) {
-  const id = dataset?.id || 'upload'
-  const th = DATASET_THEME[id] || DATASET_THEME.upload
+const SHORT = { normal_operation: 'Normal', temperature_degradation: 'Fridge failing', generator_failure: 'Generator failing' }
+
+/** Always-visible dataset switch in the header: one clear button per dataset. */
+export function DatasetSwitch({ datasets, active, onPick, busy, uploadName }) {
+  const options = [...datasets.map((d) => ({ id: d.id, title: SHORT[d.id] || d.title })), ...(uploadName ? [{ id: 'upload', title: 'Your upload' }] : [])]
   return (
-    <button className="viewing-banner" style={{ '--ds': th.accent, '--ds2': th.accent2 }} onClick={onChange} title="Change dataset">
-      <span className="pulse" />
-      <span className="vb-label">Viewing</span>
-      <b>{dataset ? dataset.title : `Your upload (${uploadName})`}</b>
-      <span className="vb-change">change ↓</span>
-    </button>
+    <div className="ds-switch" role="radiogroup" aria-label="Switch dataset">
+      <span className="ds-switch-label">Dataset</span>
+      {options.map((o) => {
+        const th = DATASET_THEME[o.id] || DATASET_THEME.upload
+        const on = o.id === active
+        return (
+          <button
+            key={o.id}
+            role="radio"
+            aria-checked={on}
+            className={`ds-opt ${on ? 'on' : ''}`}
+            style={{ '--ds': th.accent, '--ds2': th.accent2 }}
+            onClick={() => onPick(o.id)}
+            disabled={busy}
+            title={on ? 'Currently viewing' : `Switch to ${o.title}`}
+          >
+            <span className="ds-opt-icon">{on ? <span className="pulse" /> : th.icon}</span>
+            {o.title}
+          </button>
+        )
+      })}
+    </div>
   )
 }

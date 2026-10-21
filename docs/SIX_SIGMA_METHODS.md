@@ -4,7 +4,7 @@ The statistical reference for **AirX ColdChain QC**, our blood bank tool for the
 (DL track, prompt "Health Care Systems: Blood Banks"). Read it before you write or change any statistic.
 
 The rule for this file: **use the course's names, symbols and formulas** (Dr. Timothy Fraser,
-[SYSEN 5300 textbook](https://timothyfraser.com/sigma/); code at
+SYSEN 5300 course textbook; code at
 [timothyfraser/sysen](https://github.com/timothyfraser/sysen)). Where we go beyond the course, we say so
 in the "Course status" line.
 
@@ -66,7 +66,7 @@ whole series, including the excursion, would hide the very failure we're trying 
 x̄ = 2860.28, mR̄ = 279.0417, σ_short = 247.377, I limits [2118.03, 3602.53] (slide 33: 2118 / 3603),
 MR upper = 911.91, no signals.
 
-**Textbook:** [Statistical Process Control in Python](https://timothyfraser.com/sigma/chapters/statistical-process-control-in-python.html)
+**Course chapter:** Statistical Process Control in Python
 
 ---
 
@@ -160,7 +160,7 @@ assessed: process unstable" otherwise.
 **Known answers:** cp(2, 100, 80) = 1.6667; cpk(90, 2, 80, 100) = 1.6667; pp(2.5, 100, 80) = 1.3333;
 onsen.csv Cp = 0.67131, 95% CI [0.5958, 0.7468].
 
-**Textbook:** [Indices and Confidence Intervals for SPC](https://timothyfraser.com/sigma/chapters/indices-and-confidence-intervals-for-statistical-process-control-in-python.html)
+**Course chapter:** Indices and Confidence Intervals for Statistical Process Control in Python
 
 ---
 
@@ -220,8 +220,7 @@ four failures in 16 is a signal. The tool also reports the plain start probabili
 **Known answers:** r(1000, 1/2000) = 0.60653; f(100, 0.01) = 0.63212; z(t) = λ; rotary pump
 λ = 4.28e-4/h → R(730) = 0.7317, MTTF = 2336.4 h.
 
-**Textbook:** [Useful Life Distributions: Exponential](https://timothyfraser.com/sigma/chapters/useful-life-distributions-exponential-in-python.html),
-[Statistical Techniques for Exponential Distributions](https://timothyfraser.com/sigma/chapters/statistical-techniques-for-exponential-distributions-in-python.html)
+**Course chapters:** Useful Life Distributions (Exponential); Statistical Techniques for Exponential Distributions in Python
 
 ---
 
@@ -249,7 +248,7 @@ flowchart LR
 
 **Known answers:** two parallel parts at R = 0.9 → 0.99; Challenger 1 − 0.99⁸ = 0.07726.
 
-**Textbook:** [System Reliability in Python](https://timothyfraser.com/sigma/chapters/system-reliability-in-python.html)
+**Course chapter:** System Reliability in Python
 
 ---
 

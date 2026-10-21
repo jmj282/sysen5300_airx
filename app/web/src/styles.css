@@ -51,17 +51,6 @@ main { position: relative; display: flex; flex-direction: column; gap: 18px; }
 }
 .brand small { color: var(--muted); }
 
-.viewing-banner {
-  display: inline-flex; align-items: center; gap: 10px; cursor: pointer; font: inherit; color: var(--text);
-  padding: 10px 16px 10px 14px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--ds) 55%, transparent);
-  background: linear-gradient(120deg, color-mix(in srgb, var(--ds) 22%, transparent), color-mix(in srgb, var(--ds2) 10%, transparent));
-  box-shadow: 0 0 28px color-mix(in srgb, var(--ds) 30%, transparent), inset 0 0 18px color-mix(in srgb, var(--ds) 12%, transparent);
-  backdrop-filter: blur(10px); transition: transform 0.3s var(--spring), box-shadow 0.3s;
-}
-.viewing-banner:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 0 40px color-mix(in srgb, var(--ds) 45%, transparent); }
-.viewing-banner .vb-label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
-.viewing-banner b { font-family: 'Space Grotesk', sans-serif; font-size: 16px; }
-.viewing-banner .vb-change { color: var(--muted); font-size: 12px; }
 .pulse { width: 10px; height: 10px; border-radius: 50%; background: var(--ds); box-shadow: 0 0 0 0 var(--ds); animation: pulse 1.8s infinite; }
 
 /* ---------- tabs ---------- */
@@ -290,6 +279,23 @@ footer { position: relative; z-index: 1; margin-top: 32px; color: var(--muted); 
 @keyframes landGlow { 0% { box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 80%, transparent), 0 0 50px color-mix(in srgb, var(--accent) 55%, transparent); } 100% { box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35); } }
 @keyframes shimmerIn { from { opacity: 0; transform: translateY(-6px); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
 @property --angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+
+/* ---------- dataset switch buttons ---------- */
+.ds-switch { display: flex; align-items: center; gap: 6px; padding: 6px; border-radius: 16px; background: var(--glass); border: 1px solid var(--line-2); backdrop-filter: blur(14px); flex-wrap: wrap; }
+.ds-switch-label { color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; padding: 0 8px 0 6px; }
+.ds-opt { display: inline-flex; align-items: center; gap: 8px; font: 600 14px 'Inter', sans-serif; color: var(--text); cursor: pointer; padding: 9px 14px; border-radius: 12px; border: 1px solid var(--line-2); background: rgba(255, 255, 255, 0.04); transition: transform 0.25s var(--spring), background 0.25s, border-color 0.25s, box-shadow 0.25s; }
+.ds-opt:hover:not(.on):not(:disabled) { transform: translateY(-2px); border-color: var(--ds); background: color-mix(in srgb, var(--ds) 14%, transparent); }
+.ds-opt.on { cursor: default; color: #fff; border-color: var(--ds); background: linear-gradient(135deg, color-mix(in srgb, var(--ds) 45%, transparent), color-mix(in srgb, var(--ds2) 22%, transparent)); box-shadow: 0 0 24px color-mix(in srgb, var(--ds) 40%, transparent); }
+.ds-opt:disabled:not(.on) { opacity: 0.5; cursor: wait; }
+.ds-opt-icon { width: 18px; display: inline-grid; place-items: center; }
+.dataset-switch-row { padding: 4px 18px 14px 78px; }
+.switch-btn { display: inline-flex; align-items: center; gap: 8px; font: 700 14px 'Inter', sans-serif; padding: 10px 18px; border-radius: 12px; cursor: pointer; border: 1px solid var(--ds); color: var(--ds); background: color-mix(in srgb, var(--ds) 10%, transparent); transition: transform 0.25s var(--spring), background 0.25s, color 0.25s, box-shadow 0.25s; }
+.switch-btn span { transition: transform 0.25s var(--spring); }
+.switch-btn:hover:not(:disabled) { color: #08090d; background: var(--ds); box-shadow: 0 6px 22px color-mix(in srgb, var(--ds) 45%, transparent); transform: translateY(-2px); }
+.switch-btn:hover:not(:disabled) span { transform: translateX(4px); }
+.switch-btn.current { cursor: default; color: #08090d; background: var(--ds); border-color: var(--ds); }
+.switch-btn:disabled { opacity: 0.5; cursor: wait; }
+.chapter { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
 
 /* ---------- AirX wind behind the logo ---------- */
 .brand { position: relative; isolation: isolate; }

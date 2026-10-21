@@ -4,7 +4,7 @@ A guided tour you can follow yourself. Every number below is what the tool print
 datasets (seed 5300). If you get a different number, something is wrong. Dataset details are in the
 [codebook](../data/README.md).
 
-**Set up (two terminals):**
+**Set up:** `./start.sh` from the repo root (it starts both pieces and opens the browser). Or, in two terminals:
 
 ```bash
 app/api/testme.sh     # runs the 56 tests, then the API on http://localhost:8000

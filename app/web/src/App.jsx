@@ -3,7 +3,7 @@ import { API_URL, analyzeScenario, listDatasets } from './api.js'
 import Background from './components/Background.jsx'
 import Crawl from './components/Crawl.jsx'
 import Wind from './components/Wind.jsx'
-import DatasetPicker, { DATASET_THEME, ViewingBanner } from './components/DatasetPicker.jsx'
+import DatasetPicker, { DATASET_THEME, DatasetSwitch } from './components/DatasetPicker.jsx'
 import { dropIn, pieces, prefersReducedMotion, shatterOut } from './physics.js'
 import Generators from './pages/Generators.jsx'
 import Methods from './pages/Methods.jsx'
@@ -108,13 +108,7 @@ export default function App() {
     switchTo('upload', r)
   }
 
-  const showPicker = () => {
-    if (page !== 'overview') setPage('overview')
-    setTimeout(() => pickerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60)
-  }
-
   const theme = DATASET_THEME[source] || DATASET_THEME.upload
-  const current = datasets.find((d) => d.id === source)
 
   return (
     <div className="app" style={{ '--accent': theme.accent, '--accent2': theme.accent2 }}>
@@ -130,7 +124,7 @@ export default function App() {
             <small>Six Sigma monitoring for blood bank refrigeration and backup power</small>
           </div>
         </div>
-        {report ? <ViewingBanner dataset={current} uploadName={uploadName} onChange={showPicker} /> : null}
+        {datasets.length ? <DatasetSwitch datasets={datasets} active={source} onPick={(id) => switchTo(id)} busy={busy} uploadName={uploadName} /> : null}
       </header>
 
       <nav className="tabs">

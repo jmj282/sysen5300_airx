@@ -2,8 +2,6 @@
 
 Course: "Useful Life Distributions: Exponential" and "Statistical Techniques for Exponential
 Distributions" (SYSEN 5300, Fraser).
-https://timothyfraser.com/sigma/chapters/useful-life-distributions-exponential-in-python.html
-https://timothyfraser.com/sigma/chapters/statistical-techniques-for-exponential-distributions-in-python.html
 
 Course notation (the course writes z(t) for the hazard rate, not h(t)):
   F(t)  failure function (CDF)            = 1 - exp(-lambda t)

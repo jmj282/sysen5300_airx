@@ -1,7 +1,7 @@
 """Process capability (Cp, Cpk) and process performance (Pp, Ppk) indices.
 
-Course: "Indices and Confidence Intervals for Statistical Process Control in Python"
-https://timothyfraser.com/sigma/chapters/indices-and-confidence-intervals-for-statistical-process-control-in-python.html
+Course: SYSEN 5300 (Fraser), chapter "Indices and Confidence Intervals for Statistical Process Control
+in Python".
 
 - Capability indices (Cp, Cpk) use sigma_short: what the unit could do if it stays stable.
 - Performance indices (Pp, Ppk) use sigma_total: what it actually did.
