@@ -13,23 +13,24 @@ export default function Overview({ report, go }) {
   return (
     <>
       <div className="tiles">
-        <Tile label="Storage units monitored" value={o.units_monitored} note="Refrigerators, freezers, incubators" />
-        <Tile label="Active alerts" value={o.active_alerts} note="Need staff review" tone={o.active_alerts ? 'warn' : 'ok'} />
+        <Tile label="Storage units monitored" num={o.units_monitored} note="Refrigerators, freezers, incubators" />
+        <Tile label="Active alerts" num={o.active_alerts} note="Need staff review" tone={o.active_alerts ? 'warn' : 'ok'} />
         <Tile
           label="Units with excursions"
-          value={o.units_with_excursions}
+          num={o.units_with_excursions}
           note={`Outside storage spec since ${when(o.window_start)}`}
           tone={o.units_with_excursions ? 'bad' : 'ok'}
         />
         <Tile
           label="Generator start failures"
-          value={o.generator_test_failures}
+          num={o.generator_test_failures}
           note="Failed start demands, last 90 days"
           tone={o.generator_test_failures ? 'bad' : 'ok'}
         />
         <Tile
           label={`Blood at risk in a ${o.outage_hours} h blackout`}
-          value={usd(o.dollars_at_risk)}
+          num={o.dollars_at_risk}
+          fmt={usd}
           note={`Expected loss of ${usd(o.inventory_value)} inventory`}
           tone={o.dollars_at_risk > 10000 ? 'bad' : o.dollars_at_risk > 5000 ? 'warn' : 'ok'}
         />
@@ -38,8 +39,8 @@ export default function Overview({ report, go }) {
       <div className="grid-2">
         <Section title="Equipment status" kicker="Measure → Analyze">
           <div className="status-list">
-            {items.map((it) => (
-              <StatusRow key={it.id} {...it} onClick={() => go(it.page, it.id)} />
+            {items.map((it, i) => (
+              <StatusRow key={it.id} {...it} i={i} onClick={() => go(it.page, it.id)} />
             ))}
           </div>
         </Section>
@@ -49,8 +50,8 @@ export default function Overview({ report, go }) {
             <p className="empty">✓ No action needed. Every unit is stable and in spec, and backup power is reliable. Keep logging (Control).</p>
           ) : (
             <ol className="actions">
-              {report.actions.map((a) => (
-                <li key={a.item} className={a.priority.toLowerCase()}>
+              {report.actions.map((a, i) => (
+                <li key={a.item} className={a.priority.toLowerCase()} style={{ '--i': i }}>
                   <b>{a.action}</b>
                   <small>Why: {a.why}</small>
                 </li>

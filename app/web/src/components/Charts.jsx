@@ -80,7 +80,8 @@ export function ControlChart({ series, limits, spec, hits, height = 300 }) {
         width={W - PAD.l - PAD.r}
         y={y(limits.upper)}
         height={y(limits.lower) - y(limits.upper)}
-        className="band"
+        className="band grow"
+        style={{ transformOrigin: `0 ${(y(limits.upper) + y(limits.lower)) / 2}px` }}
       />
       <HLine y={y} v={limits.upper} label="+3 s" cls="limit" />
       <HLine y={y} v={limits.xbar} label="x̄" cls="center" />
@@ -88,11 +89,11 @@ export function ControlChart({ series, limits, spec, hits, height = 300 }) {
       {specVals.map((v) => (
         <HLine key={v} y={y} v={v} label={`spec ${v}`} cls="spec" />
       ))}
-      <path d={path} className="series" />
+      <path d={path} className="series draw" pathLength="1" />
       {xs.map((v, i) => {
         const cls = outOfSpec(v) ? 'pt excursion' : ruleAt.has(i) && !series.baseline[i] ? 'pt signal' : 'pt'
         return (
-          <circle key={i} cx={x(i)} cy={y(v)} r={cls === 'pt' ? 2.2 : 3.6} className={cls}>
+          <circle key={i} cx={x(i)} cy={y(v)} r={cls === 'pt' ? 2.2 : 3.6} className={`${cls} pop`} style={{ animationDelay: `${0.2 + (i / n) * 1.3}s` }}>
             <title>{`${day(series.timestamp[i])} ${new Date(series.timestamp[i]).getHours()}:00 — ${v.toFixed(1)} °C${
               ruleAt.has(i) ? ` — rule ${ruleAt.get(i).join(', ')}` : ''
             }`}</title>
@@ -124,7 +125,7 @@ export function MRChart({ series, limits, height = 170 }) {
       <Axis y={y} ticks={niceTicks(0, hi, 3)} />
       <HLine y={y} v={limits.mr_upper} label="D4·mR̄" cls="limit" />
       <HLine y={y} v={limits.mrbar} label="mR̄" cls="center" />
-      <path d={path} className="series mr" />
+      <path d={path} className="series mr draw" pathLength="1" />
       {mr.map((v, i) =>
         v !== null && v > limits.mr_upper ? <circle key={i} cx={x(i)} cy={y(v)} r={3.5} className="pt signal" /> : null
       )}
@@ -157,9 +158,9 @@ export function PChart({ pc, height = 240 }) {
       <text x={W - PAD.r + 4} y={y(pc.upper[n - 1]) + 4} className="limit-label">
         upper
       </text>
-      <path d={pc.p.map((v, i) => `${i ? 'L' : 'M'}${x(i)},${y(v)}`).join('')} className="series" />
+      <path d={pc.p.map((v, i) => `${i ? 'L' : 'M'}${x(i)},${y(v)}`).join('')} className="series draw" pathLength="1" />
       {pc.p.map((v, i) => (
-        <circle key={i} cx={x(i)} cy={y(v)} r={pc.signal[i] ? 4.5 : 2.5} className={pc.signal[i] ? 'pt excursion' : 'pt'}>
+        <circle key={i} cx={x(i)} cy={y(v)} r={pc.signal[i] ? 4.5 : 2.5} className={`${pc.signal[i] ? 'pt excursion' : 'pt'} pop`} style={{ animationDelay: `${0.2 + (i / n) * 1.3}s` }}>
           <title>{`${pc.period[i]}: ${pc.failures[i]} failed of ${pc.demands[i]} (${(v * 100).toFixed(0)}%)`}</title>
         </circle>
       ))}
@@ -187,9 +188,9 @@ export function ReliabilityChart({ curve, outageHours, height = 260 }) {
       <text x={x(outageHours) + 4} y={PAD.t + 12} className="marker-label">
         {outageHours} h outage
       </text>
-      <path d={line(curve.R)} className="series rel" />
-      <path d={line(curve.R_lower)} className="series rel-lower" />
-      <path d={line(curve.backup)} className="series backup" />
+      <path d={line(curve.R)} className="series rel draw" pathLength="1" />
+      <path d={line(curve.R_lower)} className="series rel-lower fade-in" />
+      <path d={line(curve.backup)} className="series backup draw" pathLength="1" style={{ animationDelay: '0.3s' }} />
       <g className="legend" transform={`translate(${W - PAD.r + 6}, ${PAD.t + 10})`}>
         <text className="rel">R(t)</text>
         <text y={16} className="rel-lower">
@@ -221,8 +222,8 @@ export function BlockDiagram({ pStart, rRun, pBackup, outageHours }) {
       <text x="40" y="90" textAnchor="middle" className="node-label">
         ⚡
       </text>
-      <path d="M56,85 L90,85 L90,40 L130,40" className="wire" markerEnd="url(#arrow)" />
-      <path d="M90,85 L90,130 L130,130" className="wire" markerEnd="url(#arrow)" />
+      <path d="M56,85 L90,85 L90,40 L130,40" className="wire flow" markerEnd="url(#arrow)" />
+      <path d="M90,85 L90,130 L130,130" className="wire flow" markerEnd="url(#arrow)" />
       <rect x="130" y="20" width="370" height="40" rx="8" className="box grid-box" />
       <text x="315" y="45" textAnchor="middle">
         Grid power (down during a blackout)
@@ -234,7 +235,7 @@ export function BlockDiagram({ pStart, rRun, pBackup, outageHours }) {
       <text x="215" y="143" textAnchor="middle" className="box-num">
         p = {pStart.toFixed(3)}
       </text>
-      <path d="M300,130 L330,130" className="wire" markerEnd="url(#arrow)" />
+      <path d="M300,130 L330,130" className="wire flow" markerEnd="url(#arrow)" />
       <rect x="330" y="110" width="170" height="40" rx="8" className="box" />
       <text x="415" y="128" textAnchor="middle">
         Runs {outageHours} h
@@ -242,9 +243,9 @@ export function BlockDiagram({ pStart, rRun, pBackup, outageHours }) {
       <text x="415" y="143" textAnchor="middle" className="box-num">
         R(t) = {rRun.toFixed(3)}
       </text>
-      <path d="M500,40 L560,40 L560,85 L600,85" className="wire" />
-      <path d="M500,130 L560,130 L560,85" className="wire" />
-      <path d="M600,85 L640,85" className="wire" markerEnd="url(#arrow)" />
+      <path d="M500,40 L560,40 L560,85 L600,85" className="wire grid-wire" />
+      <path d="M500,130 L560,130 L560,85" className="wire flow" />
+      <path d="M600,85 L640,85" className="wire flow" markerEnd="url(#arrow)" />
       <circle cx="660" cy="85" r="18" className="node cold" />
       <text x="660" y="90" textAnchor="middle" className="node-label">
         ❄

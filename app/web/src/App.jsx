@@ -1,5 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { API_URL, analyzeScenario, listDatasets } from './api.js'
+import Background from './components/Background.jsx'
+import DatasetPicker, { DATASET_THEME, ViewingBanner } from './components/DatasetPicker.jsx'
+import { dropIn, pieces, prefersReducedMotion, shatterOut } from './physics.js'
 import Generators from './pages/Generators.jsx'
 import Methods from './pages/Methods.jsx'
 import Overview from './pages/Overview.jsx'
@@ -19,44 +22,101 @@ export default function App() {
   const [datasets, setDatasets] = useState([])
   const [source, setSource] = useState('temperature_degradation')
   const [report, setReport] = useState(null)
+  const [uploadReport, setUploadReport] = useState(null)
   const [uploadName, setUploadName] = useState(null)
   const [error, setError] = useState(null)
   const [unit, setUnit] = useState(null)
   const [gen, setGen] = useState(null)
+  const [busy, setBusy] = useState(false)
+  const mainRef = useRef(null)
+  const pendingDrop = useRef(false)
+  const pickerRef = useRef(null)
 
   useEffect(() => {
     listDatasets().then(setDatasets).catch((e) => setError(e.message))
+    load('temperature_degradation').then(apply).catch((e) => setError(e.message))
   }, [])
 
-  useEffect(() => {
-    if (source === 'upload') return
+  const load = (id) => (id === 'upload' ? Promise.resolve(uploadReport) : analyzeScenario(id))
+
+  function apply(r) {
+    setReport(r)
+    setUnit(firstAlert(r.units, 'unit_id'))
+    setGen(firstAlert(r.generators, 'generator_id'))
+  }
+
+  /** Switch dataset with the physics transition: old UI tumbles away, new UI drops in. */
+  async function switchTo(id, preloaded) {
+    if (busy || (id === source && !preloaded)) return
+    setBusy(true)
     setError(null)
-    analyzeScenario(source)
-      .then((r) => {
-        setReport(r)
-        setUnit(firstAlert(r.units, 'unit_id'))
-        setGen(firstAlert(r.generators, 'generator_id'))
-      })
-      .catch((e) => setError(e.message))
-  }, [source])
+    const animate = !prefersReducedMotion() && mainRef.current && pieces(mainRef.current).length
+    try {
+      const dataP = preloaded ? Promise.resolve(preloaded) : load(id)
+      let fall = Promise.resolve()
+      if (animate) {
+        fall = shatterOut(mainRef.current)
+        mainRef.current.classList.add('fx-hidden') // the clones are now on screen in its place
+      }
+      const [r] = await Promise.all([dataP, new Promise((res) => setTimeout(res, animate ? 650 : 0))])
+      pendingDrop.current = animate
+      setSource(id)
+      apply(r)
+      await fall
+    } catch (e) {
+      mainRef.current?.classList.remove('fx-hidden')
+      setError(e.message)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  // After the new report renders (before paint), launch the new cards from above.
+  useLayoutEffect(() => {
+    if (!pendingDrop.current || !mainRef.current) return
+    pendingDrop.current = false
+    const main = mainRef.current
+    main.classList.remove('fx-hidden')
+    dropIn(main)
+  }, [report])
+
+  // Page (tab) changes: cards rise in, staggered.
+  useLayoutEffect(() => {
+    if (!mainRef.current || prefersReducedMotion()) return
+    pieces(mainRef.current).forEach((el, i) => {
+      el.classList.remove('fx-rise')
+      void el.offsetWidth
+      el.style.animationDelay = `${Math.min(i, 12) * 70}ms`
+      el.classList.add('fx-rise')
+      el.addEventListener('animationend', () => el.classList.remove('fx-rise'), { once: true })
+    })
+  }, [page])
 
   const go = (p, id) => {
     if (p === 'temperature') setUnit(id)
     if (p === 'generators') setGen(id)
     setPage(p)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const onUpload = (r, name) => {
-    setReport(r)
+    setUploadReport(r)
     setUploadName(name)
-    setSource('upload')
-    setUnit(firstAlert(r.units, 'unit_id'))
-    setGen(firstAlert(r.generators, 'generator_id'))
     setPage('overview')
+    switchTo('upload', r)
   }
 
+  const showPicker = () => {
+    if (page !== 'overview') setPage('overview')
+    setTimeout(() => pickerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60)
+  }
+
+  const theme = DATASET_THEME[source] || DATASET_THEME.upload
+  const current = datasets.find((d) => d.id === source)
+
   return (
-    <div className="app">
+    <div className="app" style={{ '--accent': theme.accent, '--accent2': theme.accent2 }}>
+      <Background accent={theme.accent} accent2={theme.accent2} />
       <header className="top">
         <div className="brand">
           <span className="logo">🩸</span>
@@ -67,30 +127,20 @@ export default function App() {
             <small>Six Sigma monitoring for blood bank refrigeration and backup power</small>
           </div>
         </div>
-        <label className="picker">
-          <span>Data</span>
-          <select value={source} onChange={(e) => setSource(e.target.value)}>
-            {datasets.map((d) => (
-              <option key={d.id} value={d.id}>
-                {d.description}
-              </option>
-            ))}
-            {uploadName ? <option value="upload">Uploaded: {uploadName}</option> : null}
-          </select>
-        </label>
+        {report ? <ViewingBanner dataset={current} uploadName={uploadName} onChange={showPicker} /> : null}
       </header>
 
       <nav className="tabs">
         {PAGES.map(([k, label]) => (
-          <button key={k} className={page === k ? 'on' : ''} onClick={() => setPage(k)}>
+          <button key={k} className={page === k ? 'on' : ''} onClick={() => go(k)}>
             {label}
           </button>
         ))}
       </nav>
 
-      <main>
+      <main ref={mainRef}>
         {error ? (
-          <div className="card error-card">
+          <div className="card error-card" data-fx>
             <h2>Can’t reach the analysis API</h2>
             <p>{error}</p>
             <p className="muted">
@@ -99,12 +149,17 @@ export default function App() {
             </p>
           </div>
         ) : null}
+        {page === 'overview' && datasets.length ? (
+          <div ref={pickerRef}>
+            <DatasetPicker datasets={datasets} active={source} onPick={(id) => switchTo(id)} uploadName={uploadName} busy={busy} />
+          </div>
+        ) : null}
         {page === 'upload' ? <Upload onReport={onUpload} /> : null}
         {page === 'methods' ? <Methods /> : null}
         {report && page === 'overview' ? <Overview report={report} go={go} /> : null}
         {report && page === 'temperature' ? <Temperature report={report} selected={unit} select={setUnit} /> : null}
         {report && page === 'generators' ? <Generators report={report} selected={gen} select={setGen} /> : null}
-        {!report && !error && !['upload', 'methods'].includes(page) ? <p className="loading">Analyzing…</p> : null}
+        {!report && !error && !['upload', 'methods'].includes(page) ? <div className="loading">Analyzing…</div> : null}
       </main>
 
       <footer>

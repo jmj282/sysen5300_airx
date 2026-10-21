@@ -174,9 +174,7 @@ def analyze_unit(readings, unit_type, params=None):
     else:
         status = "Normal"
         n_iso = len(warn_idx | review_idx)
-        reason = "Stable and within spec" + (
-            f" ({n_iso} isolated, unconfirmed signal(s) in the last {p['confirm_hours']} h: shown on the chart)" if n_iso else ""
-        )
+        reason = "Stable and within spec" + (f" · {n_iso} unconfirmed signal{'s' if n_iso > 1 else ''}" if n_iso else "")
 
     mr = np.concatenate([[np.nan], spc.moving_range(x)])
     return {

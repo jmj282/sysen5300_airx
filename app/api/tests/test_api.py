@@ -52,3 +52,16 @@ def test_generator_endpoint():
     r = client.post("/reliability/generator", json={"starts": 9, "demands": 10, "run_failures": 0, "run_hours": 100, "outage_hours": 8, "inventory_value": 1000}).json()
     assert r["p_start"] == 0.9 and r["R_t"] == 1.0
     assert abs(r["p_loss"] - 0.1) < 1e-9 and abs(r["dollars_at_risk"] - 100) < 1e-6
+
+
+def test_dataset_cards_and_zip_download():
+    import io
+    import zipfile
+
+    ds = client.get("/datasets").json()
+    assert all(d["title"] and d["planted"] and len(d["files"]) == 3 for d in ds)
+    r = client.get("/datasets/generator_failure.zip")
+    assert r.status_code == 200 and r.headers["content-type"] == "application/zip"
+    names = zipfile.ZipFile(io.BytesIO(r.content)).namelist()
+    assert "generator_failure/temperature_log.csv" in names and "generator_failure/CODEBOOK.md" in names
+    assert client.get("/datasets/nope.zip").status_code == 404

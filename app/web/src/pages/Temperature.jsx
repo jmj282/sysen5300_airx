@@ -82,7 +82,7 @@ export default function Temperature({ report, selected, select }) {
               first excursion.
             </p>
           ) : null}
-          <ControlChart series={unit.series} limits={unit.limits} spec={unit.spec} hits={unit.hits} />
+          <ControlChart key={unit.unit_id} series={unit.series} limits={unit.limits} spec={unit.spec} hits={unit.hits} />
           <div className="legend-row">
             <span className="lg band">control limits ±3 s (stable?)</span>
             <span className="lg spec">spec limits (capable?)</span>
@@ -98,7 +98,7 @@ export default function Temperature({ report, selected, select }) {
         </Section>
 
         <Section title="Moving range (MR) chart" kicker="Short-term variation">
-          <MRChart series={unit.series} limits={unit.limits} />
+          <MRChart key={unit.unit_id} series={unit.series} limits={unit.limits} />
           <HowToRead>
             Each point is the jump between consecutive readings. mR̄ = {num(unit.limits.mrbar, 3)} °C; the upper limit is D4·mR̄ = 3.267 × mR̄ ={' '}
             {num(unit.limits.mr_upper, 3)} °C. Big jumps mean a door left open, a power blip or a misread thermometer.

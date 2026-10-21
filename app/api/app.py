@@ -27,6 +27,29 @@ SCENARIOS = {
     "generator_failure": "Generator failure: G-02 failing start tests, including a real blackout",
 }
 
+# Plain-language descriptions shown on the dashboard's dataset cards (see data/README.md).
+SCENARIO_INFO = {
+    "normal_operation": {
+        "title": "Normal operation",
+        "tagline": "A healthy blood bank: the baseline everything else is judged against.",
+        "planted": "Nothing. Every fridge, freezer and incubator holds its set point with ordinary noise; both generators start about 99% of the time.",
+        "expect": "0 alerts · every Cpk above 1.33 · small expected loss",
+    },
+    "temperature_degradation": {
+        "title": "Temperature degradation",
+        "tagline": "A compressor wears out, and the run rules see it coming.",
+        "planted": "R-04 drifts up about 0.27 °C a day from Oct 8 and leaves the 1–6 °C spec on Oct 14. R-07's thermostat jumps 0.6 °C on Oct 15 but stays in spec.",
+        "expect": "R-04 Critical, flagged 5 days early · R-07 Warning while still in spec",
+    },
+    "generator_failure": {
+        "title": "Generator failure",
+        "tagline": "A backup generator stops starting, right before the storm season.",
+        "planted": "G-02's starter fails 8 times in 90 days, including the Oct 6 blackout and the latest weekly test, plus 2 failures while running.",
+        "expect": "G-02 Critical · p chart signals · ~19% chance of losing cooling in an 8 h blackout",
+    },
+}
+FILES = ("units.csv", "temperature_log.csv", "generator_log.csv")
+
 
 def _data_dir():
     """Bundled scenarios: $AIRX_DATA_DIR, else the repo's data/ folder, else ./data (deployed bundle)."""
@@ -76,8 +99,41 @@ async def specs():
 
 @app.get("/datasets")
 async def datasets():
-    """The bundled test scenarios."""
-    return [{"id": k, "description": v, "available": (DATA_DIR / k).is_dir()} for k, v in SCENARIOS.items()]
+    """The bundled test scenarios, with descriptions and file sizes."""
+    out = []
+    for k, v in SCENARIOS.items():
+        d = DATA_DIR / k
+        files = [{"name": f, "rows": _rows(d / f), "bytes": (d / f).stat().st_size} for f in FILES if (d / f).exists()]
+        out.append({"id": k, "description": v, **SCENARIO_INFO[k], "available": d.is_dir(), "files": files})
+    return out
+
+
+def _rows(path):
+    with open(path, "rb") as fh:
+        return max(sum(1 for _ in fh) - 1, 0)
+
+
+@app.get("/datasets/{scenario}.zip")
+async def dataset_zip(scenario: str):
+    """Download all three CSVs of one scenario, plus the codebook, as a single zip file."""
+    import zipfile
+
+    from fastapi.responses import Response
+
+    if scenario not in SCENARIOS:
+        raise HTTPException(404, "Unknown scenario")
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
+        for f in FILES:
+            z.write(DATA_DIR / scenario / f, f"{scenario}/{f}")
+        codebook = DATA_DIR / "README.md"
+        if codebook.exists():
+            z.write(codebook, f"{scenario}/CODEBOOK.md")
+    return Response(
+        buf.getvalue(),
+        media_type="application/zip",
+        headers={"Content-Disposition": f'attachment; filename="airx_{scenario}.zip"'},
+    )
 
 
 @app.get("/datasets/{scenario}/{filename}")
