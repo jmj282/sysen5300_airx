@@ -291,6 +291,43 @@ footer { position: relative; z-index: 1; margin-top: 32px; color: var(--muted); 
 @keyframes shimmerIn { from { opacity: 0; transform: translateY(-6px); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
 @property --angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
 
+/* ---------- AirX wind behind the logo ---------- */
+.brand { position: relative; isolation: isolate; }
+.brand > *:not(.wind) { position: relative; z-index: 1; }
+.wind { position: absolute; z-index: 0; opacity: 0.7; left: -30px; top: 50%; width: 420px; height: 78px; transform: translateY(-50%); pointer-events: none; overflow: visible; filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 60%, transparent)); }
+.wind .gust { fill: none; stroke-linecap: round; stroke-dasharray: 70 340; stroke-dashoffset: 410; animation: gust linear infinite; }
+.wind .curl { fill: none; stroke: rgba(255, 255, 255, 0.55); stroke-width: 1.3; stroke-linecap: round; stroke-dasharray: 60; stroke-dashoffset: 60; animation: curl 2.7s ease-in-out infinite; }
+.logo { animation: heartbeat 2.4s ease-in-out infinite, sway 3.1s ease-in-out infinite; transform-origin: 50% 90%; }
+@keyframes gust { from { stroke-dashoffset: 410; } to { stroke-dashoffset: 0; } }
+@keyframes curl { 0% { stroke-dashoffset: 60; opacity: 0; transform: translateX(0); } 40% { opacity: 1; } 100% { stroke-dashoffset: -60; opacity: 0; transform: translateX(60px); } }
+@keyframes sway { 0%, 100% { rotate: -4deg; } 50% { rotate: 6deg; } }
+
+/* ---------- opening crawl ---------- */
+.crawl-stage { position: relative; z-index: 1; margin-top: 56px; height: 92vh; min-height: 560px; border-radius: var(--radius); overflow: hidden; background: #000; border: 1px solid var(--line); box-shadow: 0 20px 80px rgba(0, 0, 0, 0.7); }
+.stars, .stars.far { position: absolute; inset: 0; background-repeat: repeat;
+  background-image: radial-gradient(1.2px 1.2px at 20px 30px, #fff, transparent), radial-gradient(1px 1px at 120px 80px, #fff, transparent), radial-gradient(1.4px 1.4px at 200px 160px, #fff, transparent), radial-gradient(1px 1px at 60px 190px, #cfe, transparent), radial-gradient(1.2px 1.2px at 260px 40px, #fff, transparent), radial-gradient(0.8px 0.8px at 160px 230px, #fff, transparent);
+  background-size: 300px 260px; animation: twinkle 4s ease-in-out infinite alternate; }
+.stars.far { background-size: 170px 150px; opacity: 0.5; animation-duration: 6s; animation-delay: 1s; }
+.crawl-intro { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); margin: 0; width: min(80%, 700px); color: #4bd5ee; font-family: 'News Cycle', sans-serif; font-size: clamp(20px, 2.6vw, 34px); line-height: 1.4; opacity: 0; }
+.crawl-stage.intro .crawl-intro { animation: introFade 5.2s ease-in-out forwards; }
+.crawl-logo { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(1.7); display: flex; flex-direction: column; align-items: center; line-height: 0.85; opacity: 0; pointer-events: none; z-index: 3;
+  font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(56px, 11vw, 150px); letter-spacing: -2px; color: transparent; -webkit-text-stroke: 3px #ffe81f; text-transform: uppercase; }
+.crawl-stage.crawl .crawl-logo { animation: logoAway 9s cubic-bezier(0.4, 0, 0.8, 0.6) forwards; }
+.crawl-fade { position: absolute; left: 0; right: 0; top: 0; height: 45%; z-index: 2; pointer-events: none; background: linear-gradient(#000 10%, rgba(0, 0, 0, 0)); }
+.crawl-perspective { position: absolute; inset: 0; perspective: 380px; display: flex; justify-content: center; overflow: hidden; }
+.crawl-text { position: relative; top: 100%; width: min(64%, 760px); color: #ffe81f; font-family: 'News Cycle', 'Franklin Gothic Medium', sans-serif; font-weight: 700; font-size: clamp(22px, 3.1vw, 42px); line-height: 1.45; text-align: justify; transform-origin: 50% 100%; transform: rotateX(25deg); opacity: 0; }
+.crawl-text p { margin: 0 0 1.1em; }
+.crawl-episode { text-align: center; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.2em !important; }
+.crawl-title { text-align: center; font-family: inherit; font-size: 1.45em; margin: 0 0 0.9em; letter-spacing: 1px; }
+.crawl-stage.crawl .crawl-text { opacity: 1; animation: crawlUp 80s linear 6s forwards; }
+.crawl-stage.static .crawl-text { opacity: 1; top: 12%; transform: rotateX(20deg); }
+.crawl-replay { position: absolute; right: 14px; bottom: 12px; z-index: 4; background: rgba(255, 232, 31, 0.12); color: #ffe81f; border: 1px solid rgba(255, 232, 31, 0.4); border-radius: 999px; padding: 6px 14px; font: 600 12px 'Inter', sans-serif; cursor: pointer; }
+.crawl-replay:hover { background: rgba(255, 232, 31, 0.22); }
+@keyframes introFade { 0% { opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes logoAway { 0% { opacity: 1; transform: translate(-50%, -50%) scale(1.7); } 85% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.04); } }
+@keyframes crawlUp { from { top: 100%; transform: rotateX(25deg) translateZ(0); } to { top: -2600px; transform: rotateX(25deg) translateZ(-1900px); } }
+@keyframes twinkle { from { opacity: 0.55; } to { opacity: 1; } }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .draw { stroke-dashoffset: 0; }

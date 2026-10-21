@@ -1,6 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { API_URL, analyzeScenario, listDatasets } from './api.js'
 import Background from './components/Background.jsx'
+import Crawl from './components/Crawl.jsx'
+import Wind from './components/Wind.jsx'
 import DatasetPicker, { DATASET_THEME, ViewingBanner } from './components/DatasetPicker.jsx'
 import { dropIn, pieces, prefersReducedMotion, shatterOut } from './physics.js'
 import Generators from './pages/Generators.jsx'
@@ -119,6 +121,7 @@ export default function App() {
       <Background accent={theme.accent} accent2={theme.accent2} />
       <header className="top">
         <div className="brand">
+          <Wind />
           <span className="logo">🩸</span>
           <div>
             <h1>
@@ -161,6 +164,8 @@ export default function App() {
         {report && page === 'generators' ? <Generators report={report} selected={gen} select={setGen} /> : null}
         {!report && !error && !['upload', 'methods'].includes(page) ? <div className="loading">Analyzing…</div> : null}
       </main>
+
+      <Crawl />
 
       <footer>
         Team AirX · SYSEN 5300 Six Sigma Hackathon (DL Challenge, Blood Banks prompt) · statistics from the bloodbank_qc Python library ·{' '}
