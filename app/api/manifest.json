@@ -26,7 +26,7 @@
       "checksum": "61939823fbcc7e8de3b61ab105331baf"
     },
     "README.md": {
-      "checksum": "c70eebf2c783f489bfac8ce528babbd9"
+      "checksum": "bcdf939a931934623a94a1b3eb96334e"
     },
     "app.py": {
       "checksum": "5026ce57368247aa0d74e560c4555835"
@@ -83,7 +83,7 @@
       "checksum": "c3dbae746813a853858e68d7db3968db"
     },
     "deployme.sh": {
-      "checksum": "4d59eb2ddcaf7e7b41ac8257f0fdf179"
+      "checksum": "9ef15ad6752aa47a590c5bce8f795c8a"
     },
     "manifestme.sh": {
       "checksum": "051b06ccdac24b40b62a0573219e1dbc"

@@ -1,6 +1,6 @@
 # ✅ Tests: how we know the numbers are right
 
-**59 automated tests** in [`app/api/tests/`](../app/api/tests/). Run them with:
+**60 automated tests** in [`app/api/tests/`](../app/api/tests/). Run them with:
 
 ```bash
 app/api/testme.sh                                  # tests, then starts the API
@@ -89,11 +89,12 @@ Two course datasets are copied into [`app/api/tests/fixtures/`](../app/api/tests
 | `test_bad_upload_gives_readable_error` | an upload with missing columns gives a readable message | degenerate |
 | `test_unknown_unit_type_is_rejected` | an unknown product type (not RBC / PLASMA / PLATELETS) is rejected | degenerate |
 
-## REST API: `test_api.py` (8 tests)
+## REST API: `test_api.py` (9 tests)
 
 | Test | Checks |
 |---|---|
 | `test_root_and_datasets` | the API runs and lists the three datasets |
+| `test_root_serves_bundled_dashboard` | when the built dashboard is bundled (the deployed app), `/` serves it as HTML and `/datasets` still returns JSON |
 | `test_analyze_scenario_matches_library` | `/analyze/temperature_degradation` gives the library's statuses |
 | `test_upload_roundtrip_equals_bundled` | uploading a dataset's files gives exactly the same overview as the bundled version |
 | `test_upload_bad_csv_is_422` | a bad upload returns HTTP 422 with a readable message |

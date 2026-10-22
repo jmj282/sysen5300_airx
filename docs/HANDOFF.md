@@ -8,13 +8,13 @@ For the next AI agent (or teammate) picking this up. Read this, then [`SPEC.md`]
 
 | Piece | Where | Status |
 |---|---|---|
-| Statistics library | `app/api/bloodbank_qc/` | done, 59 tests pass ([docs/TESTS.md](TESTS.md)) |
+| Statistics library | `app/api/bloodbank_qc/` | done, 60 tests pass ([docs/TESTS.md](TESTS.md)) |
 | REST API | `app/api/app.py` | done, runs locally (`app/api/testme.sh`) |
 | Dashboard | `app/web/` | done, runs locally (`app/web/testme.sh`) |
 | Test data + codebook | `data/` | done (seed 5300) |
 | Demo walkthrough | `demo/README.md`, `docs/WALKTHROUGH.md` + `docs/images/walkthrough/` | done; the team records an OBS video separately. Retake screenshots after UI changes |
 | README / function docs | `README.md`, `app/api/README.md`, `app/web/README.md` | done; needs a teammate fresh-clone check |
-| Deploy (H-06) | – | **blocked**: no Posit Connect publisher key for DL yet (OPEN_QUESTIONS Q1) |
+| Deploy (H-06) | `app/api/` (+ `manifest.json`, `data/`, `static/`), `.github/workflows/deploy-fastapi.yml` | **live**: public URL in `README.md` (logged-out checks return 200). Auto-redeploy Action waits on the repo secrets and a merge to `main` |
 | Devpost + Canvas submission (H-08) | – | team; due Fri Oct 23, 3 PM ET (1 PM MT) |
 
 Work happens on branch **`plan/blood-bank-tool`** with local commits. The team reviews, then merges to
@@ -65,8 +65,9 @@ Expected statuses, otherwise something broke:
 
 ## Good next tasks (each needs a teammate's yes; add to CONTRACT.yaml as H-09+)
 
-1. **Deploy** (H-06) once a Posit Connect key exists: `app/api/manifestme.sh && deployme.sh`, then set
-   `VITE_API_URL` and `app/web/manifestme.sh && deployme.sh`. Put the live URL in `README.md`.
+1. **Deploy** (H-06): done by hand on 2026-10-22; one app serves the API and the dashboard, so
+   `VITE_API_URL` and `app/web/deployme.sh` are no longer needed. Left: add the `CONNECT_SERVER` and
+   `CONNECT_API_KEY` repo secrets, merge to `main`, and watch the Action run green.
 2. **Fresh-clone check** (H-08): clone into an empty folder; run both `testme.sh` scripts.
 3. **Weibull wear-out check** for generators (shape m > 1?), course chapter "Useful Life Distributions:
    Weibull". Stretch goal only after the above.

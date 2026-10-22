@@ -11,7 +11,7 @@ datasets (seed 5300). If you get a different number, something is wrong. Dataset
 **Set up:** `./start.sh` from the repo root (it starts both pieces and opens the browser). Or, in two terminals:
 
 ```bash
-app/api/testme.sh     # runs the 59 tests, then the API on http://localhost:8000
+app/api/testme.sh     # runs the 60 tests, then the API on http://localhost:8000
 app/web/testme.sh     # the dashboard on http://localhost:5173
 ```
 

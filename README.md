@@ -101,7 +101,7 @@ Next time, just `cd sysen5300_airx` and run `./start.sh` again (a few seconds).
 - **Try it:** use the **Dataset** buttons at the top to switch between the three test datasets, then
   open the Temperature and Generators tabs. Each dataset can be downloaded from its card on the Overview.
 - **Just the API?** Open **http://localhost:8000/docs** while it runs: every endpoint is runnable there.
-- **Run the tests:** `app/api/testme.sh` (59 tests, then the API alone on port 8000; the full list is in [docs/TESTS.md](docs/TESTS.md)).
+- **Run the tests:** `app/api/testme.sh` (60 tests, then the API alone on port 8000; the full list is in [docs/TESTS.md](docs/TESTS.md)).
 
 **Troubleshooting**
 
@@ -113,7 +113,23 @@ Next time, just `cd sysen5300_airx` and run `./start.sh` again (a few seconds).
 | `Port 5173 is in use` / `address already in use` | the app is already running in another terminal: stop it there with Ctrl+C |
 | Browser didn't open | go to http://localhost:5173 yourself |
 
-**Live URL:** *pending deployment (see [docs/OPEN_QUESTIONS.md](docs/OPEN_QUESTIONS.md), Q1).*
+**Live URL:** **https://connect.systems-apps.com/content/2f99849a-2483-4b3e-91c5-1bf7caf8e417/**
+(no login needed). The dashboard is at the address itself; the interactive API docs are at
+[`/docs`](https://connect.systems-apps.com/content/2f99849a-2483-4b3e-91c5-1bf7caf8e417/docs).
+
+### Updating the live app
+
+The live app is one Posit Connect deploy of `app/api/`: the FastAPI API also serves the built dashboard.
+Every push to `main` that changes `app/api/` redeploys it through GitHub Actions
+([`.github/workflows/deploy-fastapi.yml`](.github/workflows/deploy-fastapi.yml); repo secrets
+`CONNECT_SERVER` and `CONNECT_API_KEY`). The Action uploads exactly what is committed, so:
+
+> **Changed the dashboard (`app/web/`), the data (`data/`) or `requirements.txt`?** Run
+> `bash app/api/manifestme.sh` (needs Node.js and `pip install rsconnect-python`), then commit
+> `app/api/` (`manifest.json`, `data/`, `static/`). Without that, the live app keeps the old version.
+
+Deploy by hand instead: put `CONNECT_SERVER` and `CONNECT_API_KEY` in a gitignored `.env` at the repo
+root, then run `bash app/api/manifestme.sh && bash app/api/deployme.sh`.
 
 ## The Six Sigma behind it (DMAIC)
 
@@ -143,7 +159,7 @@ Method details, formulas, course citations and known-answer checks:
 ## Demonstration
 
 - **[docs/WALKTHROUGH.md](docs/WALKTHROUGH.md)**: illustrated tour of every page and how to use it.
-- **[docs/TESTS.md](docs/TESTS.md)**: all 59 tests and what each one checks.
+- **[docs/TESTS.md](docs/TESTS.md)**: all 60 tests and what each one checks.
 
 A guided tour of all three test datasets with every number explained: **[demo/README.md](demo/README.md)**.
 
@@ -164,16 +180,28 @@ app/api/                 Python: statistics library + REST API
     system.py            series / parallel, loss of cooling, dollars at risk
     specs.py             blood storage specification limits (cited)
     analyze.py           CSV logs -> status report
-  app.py                 FastAPI routes (thin)
-  tests/                 59 pytest tests: course known answers, degenerate cases, planted signals
+  app.py                 FastAPI routes (thin); also serves the built dashboard when deployed
+  tests/                 60 pytest tests: course known answers, degenerate cases, planted signals
+  manifest.json          Posit Connect deploy fingerprint (written by manifestme.sh, committed)
+  data/ static/          deploy copies of data/ and the built dashboard (written by manifestme.sh)
   testme.sh manifestme.sh deployme.sh README.md
 app/web/                 React (Vite) dashboard: Overview, Temperature, Generators, Upload, Methods
 data/                    3 test scenarios + codebook + make_datasets.py (seeded)
 demo/README.md           the guided demonstration
 docs/                    SIX_SIGMA_METHODS.md, plan.md, OPEN_QUESTIONS.md, HANDOFF.md, images/
+.github/                 GitHub Action that redeploys app/api/ to Posit Connect on push to main
 SPEC.md, CONTRACT.yaml   the hackathon spec and task ledger
 SixSigma_README.md       the original event README (rules, links)
 ```
+
+Also in the repo, not part of the tool:
+
+| Path | What it is |
+|---|---|
+| `fastapi/` | The course's FastAPI starter, copied early on. Superseded by `app/api/`; kept until the team agrees to delete it |
+| `tools/` | Checks that came with the hackathon template (agent bundle, model ladder) |
+| `.claude/` | The template's AI-agent setup: skills (including the Posit Connect deploy guide) and subagents |
+| `CLAUDE.md`, `AGENTS.md` | Instructions the template gives AI coding agents (Claude Code and others) for this repo |
 
 ## Function and endpoint reference
 
