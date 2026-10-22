@@ -6,6 +6,9 @@ shows and how to read it.
 
 > **Run it first:** `./start.sh` from the repo root (install steps are in the [README](../README.md#-run-it-on-your-computer)).
 > The dashboard opens at **http://localhost:5173**; the API is at **http://localhost:8000/docs**.
+> No install? The same app is live at
+> **[connect.systems-apps.com/content/2f99849a-…](https://connect.systems-apps.com/content/2f99849a-2483-4b3e-91c5-1bf7caf8e417/)**
+> (API docs at [`/docs`](https://connect.systems-apps.com/content/2f99849a-2483-4b3e-91c5-1bf7caf8e417/docs)).
 
 **Contents**
 

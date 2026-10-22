@@ -17,8 +17,9 @@ For the next AI agent (or teammate) picking this up. Read this, then [`SPEC.md`]
 | Deploy (H-06) | `app/api/` (+ `manifest.json`, `data/`, `static/`), `.github/workflows/deploy-fastapi.yml` | **live**: public URL in `README.md` (logged-out checks return 200). Auto-redeploy Action waits on the repo secrets and a merge to `main` |
 | Devpost + Canvas submission (H-08) | – | team; due Fri Oct 23, 3 PM ET (1 PM MT) |
 
-Work happens on branch **`plan/blood-bank-tool`** with local commits. The team reviews, then merges to
-`main` (Carter's decision, 2026-10-21). **Don't push or merge without a human yes.**
+Work happens on feature branches with local commits (`plan/blood-bank-tool` is already merged; the deploy
+work is on `deploy/posit-connect`). The team reviews, then merges to `main` (Carter's decision, 2026-10-21).
+Merging into `main` redeploys the live app when `app/api/` changed. **Don't push or merge without a human yes.**
 
 ## How to run and check everything
 

@@ -128,7 +128,7 @@ every column with units, and how a real blood bank would collect it.
 | 2 | H-02 | `data/` generator script, 3 scenarios, codebook | Claude |
 | 3 | H-03 | `bloodbank_qc` library + pytest (known answers first) | Claude, then stats review |
 | 4 | H-04 | FastAPI wiring + React dashboard | Claude |
-| 5 | H-06 | Deploy API + dashboard to Posit Connect | needs the publisher key |
+| 5 | H-06 | Deploy API + dashboard to Posit Connect | live since 2026-10-22 (one app; URL in README); Action redeploys on push to `main` |
 | 6 | H-05 | `demo/README.md` walkthrough of each scenario + screenshots | Claude, a teammate verifies |
 | 7 | H-07 | README (tool), app READMEs, function docs | Claude |
 | 8 | H-08 | Fresh-clone check, Devpost submission | team |

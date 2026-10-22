@@ -100,7 +100,8 @@ Next time, just `cd sysen5300_airx` and run `./start.sh` again (a few seconds).
 
 - **Try it:** use the **Dataset** buttons at the top to switch between the three test datasets, then
   open the Temperature and Generators tabs. Each dataset can be downloaded from its card on the Overview.
-- **Just the API?** Open **http://localhost:8000/docs** while it runs: every endpoint is runnable there.
+- **Just the API?** Open **http://localhost:8000/docs** while it runs, or the
+  [live API docs](https://connect.systems-apps.com/content/2f99849a-2483-4b3e-91c5-1bf7caf8e417/docs): every endpoint is runnable there.
 - **Run the tests:** `app/api/testme.sh` (60 tests, then the API alone on port 8000; the full list is in [docs/TESTS.md](docs/TESTS.md)).
 
 **Troubleshooting**
@@ -207,7 +208,9 @@ Also in the repo, not part of the tool:
 
 - Library functions, inputs, outputs and the formula behind each: **[app/api/README.md](app/api/README.md)**
 - Dashboard: **[app/web/README.md](app/web/README.md)**
-- REST endpoints: the table in app/api/README.md, or http://localhost:8000/docs
+- REST endpoints: the table in app/api/README.md, the
+  [live API docs](https://connect.systems-apps.com/content/2f99849a-2483-4b3e-91c5-1bf7caf8e417/docs),
+  or http://localhost:8000/docs when running locally
 
 ## Assumptions and limits (we can explain every number)
 
