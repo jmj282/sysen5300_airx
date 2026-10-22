@@ -19,5 +19,7 @@ Thumbs.db
 
 # AirX: scenario copy made by app/api/manifestme.sh for deployment (source of truth is data/)
 app/api/data/
+# AirX: dashboard build copied in by app/api/manifestme.sh (source of truth is app/web/)
+app/api/static/
 node_modules/
 dist/

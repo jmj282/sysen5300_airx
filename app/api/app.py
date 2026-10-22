@@ -14,7 +14,8 @@ from typing import List, Optional
 import pandas as pd
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import RedirectResponse
+from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from bloodbank_qc import capability, reliability, spc, system
@@ -97,6 +98,8 @@ def _data_dir():
 
 
 DATA_DIR = _data_dir()
+# Built dashboard, copied here by manifestme.sh for the Posit Connect bundle (absent when run locally).
+WEB_DIR = Path(__file__).resolve().parent / "static"
 
 app = FastAPI(
     title="AirX ColdChain QC API",
@@ -115,8 +118,13 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 
 @app.get("/")
 async def root():
-    """Health check and pointers."""
+    """The dashboard when its build is bundled (deployed), else a health check and pointers."""
+    if (WEB_DIR / "index.html").is_file():
+        return FileResponse(WEB_DIR / "index.html")
     return {"message": "AirX ColdChain QC API is running", "docs": "/docs", "scenarios": list(SCENARIOS)}
+
+
+app.mount("/assets", StaticFiles(directory=WEB_DIR / "assets", check_dir=False), name="assets")
 
 
 @app.get("/__docs__/", include_in_schema=False)
