@@ -65,3 +65,13 @@ def test_dataset_cards_and_zip_download():
     names = zipfile.ZipFile(io.BytesIO(r.content)).namelist()
     assert "generator_failure/temperature_log.csv" in names and "generator_failure/CODEBOOK.md" in names
     assert client.get("/datasets/nope.zip").status_code == 404
+
+
+def test_dataset_explorer_codebook_summary_and_paging():
+    r = client.get("/datasets/temperature_degradation/explore", params={"file": "temperature_log.csv", "limit": 10, "filter_id": "R-04"}).json()
+    assert r["total_rows"] == 180 and len(r["rows"]) == 10 and "R-04" in r["ids"]
+    temp = next(c for c in r["columns"] if c["name"] == "temp_c")
+    assert temp["unit"] == "°C" and temp["summary"]["max"] == 7.9
+    g = client.get("/datasets/generator_failure/explore", params={"file": "generator_log.csv"}).json()
+    assert g["id_column"] == "generator_id" and all(c["meaning"] for c in g["columns"])
+    assert client.get("/datasets/nope/explore").status_code == 404

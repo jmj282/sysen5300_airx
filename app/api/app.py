@@ -50,6 +50,39 @@ SCENARIO_INFO = {
 }
 FILES = ("units.csv", "temperature_log.csv", "generator_log.csv")
 
+# Codebook shown in the dashboard's Dataset Explorer (same content as data/README.md).
+CODEBOOK = {
+    "units.csv": {
+        "about": "The inventory list: one row per storage unit.",
+        "columns": {
+            "unit_id": ("text", "", "Label on the refrigerator, freezer or incubator", "Equipment list / asset tag"),
+            "unit_type": ("category", "", "What it stores: RBC (red cells, 1–6 °C), PLASMA (≤ −18 °C) or PLATELETS (20–24 °C). Sets the spec limits", "Known"),
+            "backup_generator": ("text", "", "Which generator powers this unit in a blackout", "Facilities / electrical panel schedule"),
+            "units_stored": ("count", "units", "Typical number of blood components in the unit", "Inventory system or daily count"),
+            "value_per_unit": ("number", "USD", "Replacement cost of one component (illustrative values; set your own)", "Finance / supplier invoice"),
+        },
+    },
+    "temperature_log.csv": {
+        "about": "Manual thermometer readings: one row per reading, every 4 hours.",
+        "columns": {
+            "timestamp": ("date-time", "local time", "When the reading was taken", "Written on the unit's temperature chart"),
+            "unit_id": ("text", "", "Which unit (must appear in units.csv)", "Label on the unit"),
+            "temp_c": ("number", "°C", "Reading of the unit's calibrated thermometer, 0.1 °C resolution", "Read every 4 hours by the technician"),
+        },
+    },
+    "generator_log.csv": {
+        "about": "Every time a generator was asked to start: weekly exercises, monthly load tests and real blackouts.",
+        "columns": {
+            "test_date": ("date", "", "Date of the test or outage", "Generator logbook"),
+            "generator_id": ("text", "", "Which generator", "Nameplate"),
+            "test_type": ("category", "", "weekly_exercise (15 min), monthly_load (30 min) or outage (real blackout)", "Logbook; outages from the facilities incident log"),
+            "started": ("0 / 1", "", "1 = started and took the load; 0 = failed to start", "Logbook check box"),
+            "run_hours": ("number", "hours", "How long it ran this time (0 if it did not start)", "Engine hour meter, before and after"),
+            "run_failure": ("0 / 1", "", "1 = it stopped or failed while running", "Logbook / incident report"),
+        },
+    },
+}
+
 
 def _data_dir():
     """Bundled scenarios: $AIRX_DATA_DIR, else the repo's data/ folder, else ./data (deployed bundle)."""
@@ -111,6 +144,50 @@ async def datasets():
 def _rows(path):
     with open(path, "rb") as fh:
         return max(sum(1 for _ in fh) - 1, 0)
+
+
+@app.get("/datasets/{scenario}/explore")
+async def dataset_explore(scenario: str, file: str = "temperature_log.csv", offset: int = 0, limit: int = 50, filter_id: str = ""):
+    """Browse one bundled CSV: its codebook, a plain descriptive summary of every column, and a page of rows.
+
+    filter_id keeps only rows whose unit_id / generator_id equals it (e.g. R-04). Descriptive summaries
+    only (count, min, mean, max, distinct values); the Six Sigma statistics live in bloodbank_qc.
+    """
+    if scenario not in SCENARIOS or file not in FILES:
+        raise HTTPException(404, "Unknown scenario or file")
+    df = pd.read_csv(DATA_DIR / scenario / file)
+    id_col = next((c for c in ("unit_id", "generator_id") if c in df.columns), None)
+    ids = sorted(df[id_col].astype(str).unique().tolist()) if id_col else []
+    if filter_id and id_col:
+        df = df[df[id_col].astype(str) == filter_id]
+    book = CODEBOOK[file]
+    columns = []
+    for c in df.columns:
+        kind, unit, meaning, source = book["columns"].get(c, ("", "", "", ""))
+        s = df[c]
+        summary = {"count": int(s.notna().sum())}
+        if pd.api.types.is_numeric_dtype(s) and s.notna().any():
+            summary.update(min=float(s.min()), mean=float(s.mean()), max=float(s.max()))
+        else:
+            vc = s.astype(str).value_counts()
+            summary.update(distinct=int(vc.size), top=[[str(k), int(v)] for k, v in vc.head(4).items()])
+            if c in ("timestamp", "test_date"):
+                summary.update(first=str(s.min()), last=str(s.max()))
+        columns.append({"name": c, "type": kind, "unit": unit, "meaning": meaning, "source": source, "summary": summary})
+    limit = max(1, min(limit, 200))
+    page = df.iloc[offset : offset + limit]
+    return {
+        "scenario": scenario,
+        "file": file,
+        "about": book["about"],
+        "total_rows": int(len(df)),
+        "offset": offset,
+        "limit": limit,
+        "id_column": id_col,
+        "ids": ids,
+        "columns": columns,
+        "rows": page.astype(object).where(page.notna(), None).values.tolist(),
+    }
 
 
 @app.get("/datasets/{scenario}.zip")

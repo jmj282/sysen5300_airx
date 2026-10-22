@@ -41,3 +41,9 @@ export const analyzeUpload = (files, params = {}) => {
 
 /** Link to download one bundled CSV, so users can copy the format. */
 export const datasetFileUrl = (id, file) => `${API_URL}/datasets/${id}/${file}`
+
+/** GET /datasets/{id}/explore : codebook, column summaries and one page of rows for a bundled CSV. */
+export const exploreDataset = (id, file, { offset = 0, limit = 50, filterId = '' } = {}) => {
+  const q = new URLSearchParams({ file, offset: String(offset), limit: String(limit), filter_id: filterId })
+  return getJson(`/datasets/${id}/explore?${q}`)
+}

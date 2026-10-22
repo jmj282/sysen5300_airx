@@ -3,9 +3,11 @@ import { API_URL, analyzeScenario, listDatasets } from './api.js'
 import Background from './components/Background.jsx'
 import Crawl from './components/Crawl.jsx'
 import Wind from './components/Wind.jsx'
+import DatasetExplorer from './components/DatasetExplorer.jsx'
 import DatasetPicker, { DATASET_THEME, DatasetSwitch } from './components/DatasetPicker.jsx'
 import { cancelAll, dropIn, pieces, prefersReducedMotion, shatterOut } from './physics.js'
 import Generators from './pages/Generators.jsx'
+import About from './pages/About.jsx'
 import Methods from './pages/Methods.jsx'
 import Overview from './pages/Overview.jsx'
 import Temperature from './pages/Temperature.jsx'
@@ -17,6 +19,7 @@ const PAGES = [
   ['generators', 'Generators'],
   ['upload', 'Upload data'],
   ['methods', 'Methods'],
+  ['about', 'About AirX'],
 ]
 
 export default function App() {
@@ -31,6 +34,7 @@ export default function App() {
   const [gen, setGen] = useState(null)
   const [busy, setBusy] = useState(false)
   const [queuedId, setQueuedId] = useState(null)
+  const [explorerOpen, setExplorerOpen] = useState(false)
   const mainRef = useRef(null)
   const pickerRef = useRef(null)
   // Refs (not state) for everything the switch logic reads, so rapid clicks see current values at once.
@@ -193,14 +197,21 @@ export default function App() {
         {page === 'overview' && datasets.length ? (
           <div ref={pickerRef}>
             <DatasetPicker datasets={datasets} active={source} queued={queuedId} onPick={(id) => switchTo(id)} uploadName={uploadName} busy={busy} />
+            <button className={`explorer-tab ${explorerOpen ? 'open' : ''}`} onClick={() => setExplorerOpen((o) => !o)} aria-expanded={explorerOpen}>
+              <span>🔎 Explorer</span>
+              <small>{explorerOpen ? 'Hide the dataset details' : 'Look inside the dataset files: columns, meanings, summaries and rows'}</small>
+              <i aria-hidden="true">{explorerOpen ? '▲' : '▼'}</i>
+            </button>
+            {explorerOpen ? <DatasetExplorer datasets={datasets} active={source} /> : null}
           </div>
         ) : null}
         {page === 'upload' ? <Upload onReport={onUpload} /> : null}
         {page === 'methods' ? <Methods /> : null}
+        {page === 'about' ? <About /> : null}
         {report && page === 'overview' ? <Overview report={report} go={go} /> : null}
         {report && page === 'temperature' ? <Temperature report={report} selected={unit} select={setUnit} /> : null}
         {report && page === 'generators' ? <Generators report={report} selected={gen} select={setGen} /> : null}
-        {!report && !error && !['upload', 'methods'].includes(page) ? <div className="loading">Analyzing…</div> : null}
+        {!report && !error && !['upload', 'methods', 'about'].includes(page) ? <div className="loading">Analyzing…</div> : null}
       </main>
 
       <Crawl />
