@@ -21,5 +21,7 @@ Thumbs.db
 app/api/data/
 # AirX: dashboard build copied in by app/api/manifestme.sh (source of truth is app/web/)
 app/api/static/
+# rsconnect's local deploy record (holds the server address; keep it on your machine)
+app/api/rsconnect-python/
 node_modules/
 dist/

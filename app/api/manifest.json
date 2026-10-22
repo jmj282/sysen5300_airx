@@ -1,0 +1,146 @@
+{
+  "version": 1,
+  "locale": "English_United States.1252",
+  "metadata": {
+    "appmode": "python-fastapi",
+    "entrypoint": "app:app"
+  },
+  "python": {
+    "version": "3.12.10",
+    "package_manager": {
+      "name": "pip",
+      "version": "25.0.1",
+      "package_file": "requirements.txt"
+    }
+  },
+  "environment": {
+    "python": {
+      "requires": "~=3.12.0"
+    }
+  },
+  "files": {
+    "requirements.txt": {
+      "checksum": "0fe63a4d68e8f08c821a2555875df9dd"
+    },
+    ".pytest_cache/.gitignore": {
+      "checksum": "85757ff2adfbaf633a1dd16a265f8826"
+    },
+    ".pytest_cache/CACHEDIR.TAG": {
+      "checksum": "f552fcc7d0ecdb6607533519d6898357"
+    },
+    ".pytest_cache/README.md": {
+      "checksum": "11c87436abd496719b2727c87d217993"
+    },
+    ".pytest_cache/v/cache/nodeids": {
+      "checksum": "659c0167afe8d39f1f39d9f03594ec46"
+    },
+    ".pytest_cache/v/cache/stepwise": {
+      "checksum": "d751713988987e9331980363e24189ce"
+    },
+    ".python-version": {
+      "checksum": "61939823fbcc7e8de3b61ab105331baf"
+    },
+    "README.md": {
+      "checksum": "22fff4742332e108c443dba69671c1fe"
+    },
+    "app.py": {
+      "checksum": "58f06c327e109760ea673d3255b11597"
+    },
+    "bloodbank_qc/__init__.py": {
+      "checksum": "7a32d398151717bd3163ad8a9ef1e137"
+    },
+    "bloodbank_qc/__pycache__/__init__.cpython-312.pyc": {
+      "checksum": "4029a9965d7ef74ea56e4729d7b48bba"
+    },
+    "bloodbank_qc/__pycache__/analyze.cpython-312.pyc": {
+      "checksum": "3d5f09d47c8a440dc8bd0e8c722a3987"
+    },
+    "bloodbank_qc/__pycache__/capability.cpython-312.pyc": {
+      "checksum": "b32df46539d8b422be77de3f0b4d48e7"
+    },
+    "bloodbank_qc/__pycache__/reliability.cpython-312.pyc": {
+      "checksum": "d14c13a143789bb88fa415de25154c88"
+    },
+    "bloodbank_qc/__pycache__/spc.cpython-312.pyc": {
+      "checksum": "293d973a57867c67efbf8ae033a2b1bf"
+    },
+    "bloodbank_qc/__pycache__/specs.cpython-312.pyc": {
+      "checksum": "fd37542fd650c52725ca58d80096456c"
+    },
+    "bloodbank_qc/__pycache__/system.cpython-312.pyc": {
+      "checksum": "d2eae93c72ce3af9cf657c99eadf6074"
+    },
+    "bloodbank_qc/analyze.py": {
+      "checksum": "1e9aa02026798c1dc22f57c3888acde1"
+    },
+    "bloodbank_qc/capability.py": {
+      "checksum": "327fbb4e5907ffb463688bbe8ef91f49"
+    },
+    "bloodbank_qc/reliability.py": {
+      "checksum": "47a4d96ae96f348d1f714ff1fbaf2159"
+    },
+    "bloodbank_qc/spc.py": {
+      "checksum": "19fec08b2af47e1b6806fb452d22dbcb"
+    },
+    "bloodbank_qc/specs.py": {
+      "checksum": "f15460b1d5ca2434629f9969c56d4857"
+    },
+    "bloodbank_qc/system.py": {
+      "checksum": "5d7adc4506b81d7a2d2da18e5d7b2b07"
+    },
+    "data/README.md": {
+      "checksum": "2bf06486764375d747b64b8decda2bfd"
+    },
+    "data/generator_failure/generator_log.csv": {
+      "checksum": "7ea5d924998ebcbfb3dcf66438e90de1"
+    },
+    "data/generator_failure/temperature_log.csv": {
+      "checksum": "354a05dae5e48489315efbc0519cbbc3"
+    },
+    "data/generator_failure/units.csv": {
+      "checksum": "e2d32aa5bbfdb75b72aee9a1396be43a"
+    },
+    "data/normal_operation/generator_log.csv": {
+      "checksum": "851839091e6c38ec3dc387e15993c47a"
+    },
+    "data/normal_operation/temperature_log.csv": {
+      "checksum": "354a05dae5e48489315efbc0519cbbc3"
+    },
+    "data/normal_operation/units.csv": {
+      "checksum": "e2d32aa5bbfdb75b72aee9a1396be43a"
+    },
+    "data/temperature_degradation/generator_log.csv": {
+      "checksum": "851839091e6c38ec3dc387e15993c47a"
+    },
+    "data/temperature_degradation/temperature_log.csv": {
+      "checksum": "aa9a7eda649a5c5ebf5f4e3e5a18cd15"
+    },
+    "data/temperature_degradation/units.csv": {
+      "checksum": "e2d32aa5bbfdb75b72aee9a1396be43a"
+    },
+    "deployme.sh": {
+      "checksum": "f90717cba0b970a6eae1e4a23cbb2d92"
+    },
+    "manifestme.sh": {
+      "checksum": "33706ce02dd8309d1162268671a3a795"
+    },
+    "pytest.ini": {
+      "checksum": "ed7e85ab42aa5ae8e0f2d1804aec28b3"
+    },
+    "requirements-dev.txt": {
+      "checksum": "b69a636a81847fdd603931e5b5dd6485"
+    },
+    "static/assets/index-BY6MjYsH.js": {
+      "checksum": "05104c8472fac90af38d2aac10515f96"
+    },
+    "static/assets/index-v2y6XLfe.css": {
+      "checksum": "175b0db24f06abdd2fb367c502a0575f"
+    },
+    "static/index.html": {
+      "checksum": "53bcba4715bd51ae8bdc8ff78b1dffa7"
+    },
+    "testme.sh": {
+      "checksum": "0ec0d511d4616b1ec83f913a96a70252"
+    }
+  }
+}
