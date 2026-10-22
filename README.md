@@ -24,25 +24,91 @@ Every number comes from a tested Python library built on the SYSEN 5300 course m
 
 ---
 
-## ▶ Run it on your computer (2 steps)
+## ▶ Run it on your computer
 
-You need **Python 3.10+** ([download](https://www.python.org/downloads/)) and **Node.js 20+**
-([download](https://nodejs.org/)). Then, in a terminal:
+You need three free programs: **Python** (runs the statistics), **Node.js** (runs the dashboard) and
+**Git** (downloads the project). Install them once (step 1), then run the app with one command (step 2).
+
+### Step 1: install Python, Node.js and Git (one time)
+
+<details open>
+<summary><b>🍎 Mac</b></summary>
+
+**Option A, installers (simplest):**
+
+1. **Python 3.10 or newer:** go to https://www.python.org/downloads/, click the yellow **Download Python** button, open the `.pkg` and click through.
+2. **Node.js 20 or newer:** go to https://nodejs.org/, download the **LTS** version, open the `.pkg` and click through.
+3. **Git:** open the **Terminal** app (press ⌘ + Space, type *Terminal*, press Enter) and type `git --version`. If macOS offers to install the "command line developer tools", click **Install**.
+
+**Option B, Homebrew (if you already use it):**
+
+```bash
+brew install python node git
+```
+
+</details>
+
+<details open>
+<summary><b>🪟 Windows</b></summary>
+
+**Option A, installers (simplest):**
+
+1. **Python 3.10 or newer:** go to https://www.python.org/downloads/, click **Download Python**, and run the installer.
+   ⚠️ On the first screen, **tick "Add python.exe to PATH"** before clicking *Install Now*.
+2. **Node.js 20 or newer:** go to https://nodejs.org/, download the **LTS** version (`.msi`) and click through with the defaults.
+3. **Git for Windows:** go to https://git-scm.com/download/win, download it and click through with the defaults. This also installs **Git Bash**, the terminal you'll use in step 2.
+
+**Option B, one command in PowerShell (Windows 10/11 with winget):**
+
+```powershell
+winget install -e --id Python.Python.3.12
+winget install -e --id OpenJS.NodeJS.LTS
+winget install -e --id Git.Git
+```
+
+Close and reopen your terminal afterwards so it can find the new programs.
+
+</details>
+
+**Check it worked.** Open a terminal (Mac: **Terminal**; Windows: **Git Bash** from the Start menu) and run:
+
+```bash
+python3 --version    # Windows: python --version   -> Python 3.10 or higher
+node --version       # -> v20 or higher
+git --version        # -> any version
+```
+
+If one says "command not found", close the terminal, open a new one and try again. On Windows, if
+Python is missing, re-run its installer and tick **Add python.exe to PATH**.
+
+### Step 2: download and start the app
+
+In the same terminal (Mac: **Terminal**; Windows: **Git Bash**, not PowerShell or Command Prompt):
 
 ```bash
 git clone https://github.com/jmj282/sysen5300_airx.git
-cd sysen5300_airx && ./start.sh
+cd sysen5300_airx
+./start.sh
 ```
 
-That's it. The first run installs everything (about 1–2 minutes), then your browser opens the dashboard
-at **http://localhost:5173**. Press **Ctrl+C** in the terminal to stop it. Run `./start.sh` again any
-time; later starts take a few seconds.
+The first run installs everything the app needs (1–2 minutes), then your browser opens the dashboard at
+**http://localhost:5173**. Leave the terminal open while you use it, and press **Ctrl+C** there to stop.
+Next time, just `cd sysen5300_airx` and run `./start.sh` again (a few seconds).
 
-- **Windows:** run the same two lines in **Git Bash** (installed with [Git for Windows](https://git-scm.com/download/win)).
 - **Try it:** use the **Dataset** buttons at the top to switch between the three test datasets, then
-  open the Temperature and Generators tabs. Every dataset can be downloaded from its card on the Overview.
+  open the Temperature and Generators tabs. Each dataset can be downloaded from its card on the Overview.
 - **Just the API?** Open **http://localhost:8000/docs** while it runs: every endpoint is runnable there.
-- **Run the tests:** `app/api/testme.sh` (57 statistics tests, then the API alone on port 8000).
+- **Run the tests:** `app/api/testme.sh` (58 tests, then the API alone on port 8000).
+
+**Troubleshooting**
+
+| Problem | Fix |
+|---|---|
+| `permission denied: ./start.sh` | run `bash start.sh` instead |
+| "Python 3.10+ is required" | Python isn't installed or isn't on PATH: redo step 1, then open a new terminal |
+| "Node.js 20+ is required" | install Node.js LTS from https://nodejs.org/, then open a new terminal |
+| `Port 5173 is in use` / `address already in use` | the app is already running in another terminal: stop it there with Ctrl+C |
+| Browser didn't open | go to http://localhost:5173 yourself |
 
 **Live URL:** *pending deployment (see [docs/OPEN_QUESTIONS.md](docs/OPEN_QUESTIONS.md), Q1).*
 

@@ -5,9 +5,19 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-PY="$(command -v python3 || command -v python || true)"
-[ -n "$PY" ] || { echo "Python 3.10+ is required: https://www.python.org/downloads/"; exit 1; }
-command -v npm >/dev/null || { echo "Node.js 20+ is required: https://nodejs.org/"; exit 1; }
+# Find a Python that actually runs and is 3.10+. (On Windows, "python3" can be a Microsoft Store
+# placeholder that doesn't run, so each candidate is tested rather than trusted.)
+PY=""
+for c in python3 python py; do
+  if command -v "$c" >/dev/null 2>&1 && "$c" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)' >/dev/null 2>&1; then
+    PY="$c"
+    break
+  fi
+done
+[ -n "$PY" ] || { echo "Python 3.10+ is required. Install it (see README, Step 1), then open a new terminal."; exit 1; }
+command -v npm >/dev/null 2>&1 || { echo "Node.js 20+ is required. Install it (see README, Step 1), then open a new terminal."; exit 1; }
+NODE_MAJOR="$(node -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0)"
+[ "$NODE_MAJOR" -ge 20 ] || { echo "Node.js 20+ is required (found $(node --version 2>/dev/null)). Install the LTS from https://nodejs.org/"; exit 1; }
 
 if [ ! -d .venv ]; then
   echo "▶ Creating Python environment (.venv)..."
