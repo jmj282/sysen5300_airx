@@ -1,5 +1,9 @@
 # Demonstration: AirX ColdChain QC on the three test datasets
 
+> For a page-by-page tour of the whole dashboard (switching datasets, downloads, the Explorer and
+> codebook, every tab), see the **[illustrated walkthrough](../docs/WALKTHROUGH.md)**. This page focuses
+> on what the tool finds in each dataset, number by number.
+
 A guided tour you can follow yourself. Every number below is what the tool prints for the bundled
 datasets (seed 5300). If you get a different number, something is wrong. Dataset details are in the
 [codebook](../data/README.md).
@@ -7,18 +11,18 @@ datasets (seed 5300). If you get a different number, something is wrong. Dataset
 **Set up:** `./start.sh` from the repo root (it starts both pieces and opens the browser). Or, in two terminals:
 
 ```bash
-app/api/testme.sh     # runs the 56 tests, then the API on http://localhost:8000
+app/api/testme.sh     # runs the 59 tests, then the API on http://localhost:8000
 app/web/testme.sh     # the dashboard on http://localhost:5173
 ```
 
-Pick a scenario in the **Data** menu at the top of the dashboard. Or skip the dashboard and call the
+Pick a scenario with the **Dataset** buttons at the top right of the dashboard (or a card on the Overview). Or skip the dashboard and call the
 API: `curl http://localhost:8000/analyze/<scenario>`, or use http://localhost:8000/docs.
 
 ---
 
 ## 1. `normal_operation`: a healthy blood bank
 
-![Overview, normal operation](../docs/images/demo/1-normal-overview.jpg)
+![Overview, normal operation](../docs/images/walkthrough/20-overview-normal.jpg)
 
 | What you see | Value | How to read it |
 |---|---|---|
@@ -41,7 +45,7 @@ curl -s localhost:8000/analyze/normal_operation | python3 -c "import sys,json; p
 
 ## 2. `temperature_degradation`: catching a failing compressor early
 
-![Overview, degradation](../docs/images/demo/2-degradation-overview.jpg)
+![Overview, degradation](../docs/images/walkthrough/21-overview-temperature-degradation.jpg)
 
 | What you see | Value | How to read it |
 |---|---|---|
@@ -51,7 +55,7 @@ curl -s localhost:8000/analyze/normal_operation | python3 -c "import sys,json; p
 
 Open **Temperature → R-04**:
 
-![R-04 individuals chart](../docs/images/demo/3-degradation-r04-ichart.jpg)
+![R-04 individuals chart](../docs/images/walkthrough/10-temperature-ichart.jpg)
 
 | Number | Value | Where it comes from |
 |---|---|---|
@@ -79,7 +83,7 @@ in spec**: service it before it becomes an excursion.
 
 ## 3. `generator_failure`: will the blood survive the next blackout?
 
-![Overview, generator failure](../docs/images/demo/4-generator-overview.jpg)
+![Overview, generator failure](../docs/images/walkthrough/08-overview-generator-failure.jpg)
 
 | What you see | Value | How to read it |
 |---|---|---|
@@ -89,7 +93,7 @@ in spec**: service it before it becomes an excursion.
 
 Open **Generators → G-02**:
 
-![G-02 reliability](../docs/images/demo/5-generator-g02.jpg)
+![G-02 reliability](../docs/images/walkthrough/12-generators-top.jpg)
 
 | Number | Value | Formula |
 |---|---|---|
@@ -102,7 +106,7 @@ Open **Generators → G-02**:
 | P(loss of cooling) | **18.7%** | 1 − 0.813 |
 | Expected $ at risk | **$26,179** of $140,200 | inventory × P(loss) |
 
-![G-02 p chart](../docs/images/demo/6-generator-pchart.jpg)
+![G-02 p chart](../docs/images/walkthrough/13-generators-pchart-reliability.jpg)
 
 **p chart** (one point per quarter, ~16 demands): p̄ = **0.55%** from the 11 baseline quarters. The
 shaded window is judged against those limits: **2026 Q3: 4 of 16 failed** (upper limit 2 of 16) and

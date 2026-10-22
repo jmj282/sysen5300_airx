@@ -8,11 +8,11 @@ For the next AI agent (or teammate) picking this up. Read this, then [`SPEC.md`]
 
 | Piece | Where | Status |
 |---|---|---|
-| Statistics library | `app/api/bloodbank_qc/` | done, 57 tests pass |
+| Statistics library | `app/api/bloodbank_qc/` | done, 59 tests pass ([docs/TESTS.md](TESTS.md)) |
 | REST API | `app/api/app.py` | done, runs locally (`app/api/testme.sh`) |
 | Dashboard | `app/web/` | done, runs locally (`app/web/testme.sh`) |
 | Test data + codebook | `data/` | done (seed 5300) |
-| Demo walkthrough | `demo/README.md` + `docs/images/demo/` | done; the team records an OBS video separately |
+| Demo walkthrough | `demo/README.md`, `docs/WALKTHROUGH.md` + `docs/images/walkthrough/` | done; the team records an OBS video separately. Retake screenshots after UI changes |
 | README / function docs | `README.md`, `app/api/README.md`, `app/web/README.md` | done; needs a teammate fresh-clone check |
 | Deploy (H-06) | – | **blocked**: no Posit Connect publisher key for DL yet (OPEN_QUESTIONS Q1) |
 | Devpost + Canvas submission (H-08) | – | team; due Fri Oct 23, 3 PM ET (1 PM MT) |

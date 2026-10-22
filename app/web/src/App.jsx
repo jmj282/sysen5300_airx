@@ -145,8 +145,9 @@ export default function App() {
   }, [page])
 
   const go = (p, id) => {
-    if (p === 'temperature') setUnit(id)
-    if (p === 'generators') setGen(id)
+    // Only change the selection when a specific unit/generator was clicked; a plain tab click keeps it.
+    if (p === 'temperature' && id) setUnit(id)
+    if (p === 'generators' && id) setGen(id)
     setPage(p)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }

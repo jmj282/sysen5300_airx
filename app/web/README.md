@@ -17,13 +17,17 @@ VITE_API_URL=https://your-api-address
 
 ## Pages
 
+Illustrated tour with screenshots: [docs/WALKTHROUGH.md](../../docs/WALKTHROUGH.md).
+
+
 | Page | Shows | Built from |
 |---|---|---|
-| Overview | tiles (units, alerts, excursions, generator failures, $ at risk), equipment status, ranked actions, DMAIC strip | `report.overview`, `units`, `generators`, `actions` |
+| Overview | dataset cards with downloads, the 🔎 Explorer (codebook, column summaries, paged rows), tiles, equipment light board, status list with sparklines, ranked actions, DMAIC strip | `GET /datasets`, `GET /datasets/{id}/explore`, `report.overview`, `units`, `generators`, `actions` |
 | Temperature | unit list; I chart (control band, spec lines, baseline, signals, excursions); MR chart; run-rule list; capability table with CIs | `units[i]` |
 | Generators | P(start), λ̂, MTTF, R(t), P(loss), $ at risk; block diagram; p chart; R(t) curve; latest log | `generators[i]` |
 | Upload data | three CSV inputs, sample downloads, upload history (this browser's localStorage) | `POST /analyze` |
-| Methods | the Six Sigma method behind each number, with textbook links and assumptions | static |
+| Methods | the Six Sigma method behind each number, with the course chapter and assumptions | static |
+| About AirX | team, mission, how to use it, how it's built, credits | static |
 
 ## Files
 

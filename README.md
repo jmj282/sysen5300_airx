@@ -12,7 +12,10 @@ signature in the generator logbook) into a shift-change answer: **which unit nee
 inventory move before the blood is compromised, and will backup power last through the next blackout?**
 Every number comes from a tested Python library built on the SYSEN 5300 course methods.
 
-![Overview of the temperature-degradation scenario](docs/images/demo/2-degradation-overview.jpg)
+![AirX ColdChain QC dashboard](docs/images/walkthrough/01-landing.jpg)
+
+> 📖 **New here? Read the [illustrated walkthrough](docs/WALKTHROUGH.md)**: every page, with screenshots, including
+> how to switch datasets, download them and read the codebook in the Explorer.
 
 | | |
 |---|---|
@@ -98,7 +101,7 @@ Next time, just `cd sysen5300_airx` and run `./start.sh` again (a few seconds).
 - **Try it:** use the **Dataset** buttons at the top to switch between the three test datasets, then
   open the Temperature and Generators tabs. Each dataset can be downloaded from its card on the Overview.
 - **Just the API?** Open **http://localhost:8000/docs** while it runs: every endpoint is runnable there.
-- **Run the tests:** `app/api/testme.sh` (58 tests, then the API alone on port 8000).
+- **Run the tests:** `app/api/testme.sh` (59 tests, then the API alone on port 8000; the full list is in [docs/TESTS.md](docs/TESTS.md)).
 
 **Troubleshooting**
 
@@ -139,6 +142,9 @@ Method details, formulas, course citations and known-answer checks:
 
 ## Demonstration
 
+- **[docs/WALKTHROUGH.md](docs/WALKTHROUGH.md)**: illustrated tour of every page and how to use it.
+- **[docs/TESTS.md](docs/TESTS.md)**: all 59 tests and what each one checks.
+
 A guided tour of all three test datasets with every number explained: **[demo/README.md](demo/README.md)**.
 
 | Scenario | Planted problem | What the tool shows |
@@ -159,7 +165,7 @@ app/api/                 Python: statistics library + REST API
     specs.py             blood storage specification limits (cited)
     analyze.py           CSV logs -> status report
   app.py                 FastAPI routes (thin)
-  tests/                 57 pytest tests: course known answers, degenerate cases, planted signals
+  tests/                 59 pytest tests: course known answers, degenerate cases, planted signals
   testme.sh manifestme.sh deployme.sh README.md
 app/web/                 React (Vite) dashboard: Overview, Temperature, Generators, Upload, Methods
 data/                    3 test scenarios + codebook + make_datasets.py (seeded)

@@ -10,7 +10,7 @@ thin FastAPI layer over it. The library never imports FastAPI, so every statisti
 # interactive docs:  http://localhost:8000/docs
 ```
 
-Tests only: `../../.venv/bin/python -m pytest` (from this folder). 57 tests: course known answers
+Tests only: `../../.venv/bin/python -m pytest` (from this folder). 59 tests (listed in [docs/TESTS.md](../../docs/TESTS.md)): course known answers
 (Fraser's `daily_production.csv`, `onsen.csv`, docstring and lecture examples), degenerate cases
 (constant data, zero failures, n = 1) and a planted signal for every run rule.
 

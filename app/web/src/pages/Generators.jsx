@@ -43,7 +43,7 @@ export default function Generators({ report, selected, select }) {
           </HowToRead>
         </Section>
 
-        <div className="grid-2">
+        <div className="stack">
           <Section title="p chart: failed starts per quarter" kicker="Attribute SPC">
             <PChart key={g.generator_id} pc={g.p_chart} />
             <HowToRead>

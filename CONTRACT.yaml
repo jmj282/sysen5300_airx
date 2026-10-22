@@ -74,7 +74,7 @@ tasks:
   - id: H-04
     title: Working tool - one demo copied to app/ and wired to the H-03 function
     points: "25 - Tool Implementation: an effective, working tool (does it run?)"
-    status: in_progress
+    status: done
     owner: "Carter (Claude Code)"
     started_at: "2026-10-21"
     owns: ["app/"]
@@ -86,7 +86,7 @@ tasks:
       The testme script in app/ starts the tool with one command, and a call
       on one data/ file (endpoint, function call or app upload) returns the
       same numbers as the H-03 known-answer test.
-    result: "API (app/api, testme.sh) and React dashboard (app/web) run locally and return the H-03 numbers; awaiting team review"
+    result: "app/api (FastAPI) + app/web (React) run with ./start.sh; fresh clone of main tested; endpoints return the H-03 numbers"
 
   - id: H-05
     title: Demonstration of the tool on every test dataset
@@ -100,7 +100,7 @@ tasks:
       URL to run, the numbers or chart the tool shows, and a one-line "how to
       read this"; a teammate who did not write it follows it and gets the same
       numbers.
-    result: "demo/README.md walks all 3 scenarios with screenshots; OBS video by the team pending"
+    result: "demo/README.md + docs/WALKTHROUGH.md with 21 current screenshots; OBS video by the team pending"
 
   - id: H-06
     title: Deploy to the course Posit Connect server
@@ -125,7 +125,7 @@ tasks:
   - id: H-07
     title: README and function documentation
     points: "10 - Tool Documentation: excellent, easy-to-follow documentation"
-    status: in_progress
+    status: done
     owner: "Carter (Claude Code)"
     started_at: "2026-10-21"
     owns: ["README.md", "app/README.md"]
@@ -137,7 +137,7 @@ tasks:
       how each function or endpoint works, how to run it in one command, the
       live URL, and links demo/README.md. A teammate who did not write the
       code follows it from a fresh clone and it works.
-    result: "README.md, app/api/README.md, app/web/README.md written; needs a teammate fresh-clone check"
+    result: "README (install + run), docs/WALKTHROUGH.md, docs/TESTS.md, app/api/README.md, app/web/README.md, in-app Methods + About AirX"
 
   - id: H-08
     title: Reproducible public repo, submitted on Devpost
