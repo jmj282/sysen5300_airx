@@ -20,115 +20,79 @@
   },
   "files": {
     "requirements.txt": {
-      "checksum": "0fe63a4d68e8f08c821a2555875df9dd"
-    },
-    ".pytest_cache/.gitignore": {
-      "checksum": "85757ff2adfbaf633a1dd16a265f8826"
-    },
-    ".pytest_cache/CACHEDIR.TAG": {
-      "checksum": "f552fcc7d0ecdb6607533519d6898357"
-    },
-    ".pytest_cache/README.md": {
-      "checksum": "11c87436abd496719b2727c87d217993"
-    },
-    ".pytest_cache/v/cache/nodeids": {
-      "checksum": "659c0167afe8d39f1f39d9f03594ec46"
-    },
-    ".pytest_cache/v/cache/stepwise": {
-      "checksum": "d751713988987e9331980363e24189ce"
+      "checksum": "9f7445654f954039c51c2f5bfdd9e13b"
     },
     ".python-version": {
       "checksum": "61939823fbcc7e8de3b61ab105331baf"
     },
     "README.md": {
-      "checksum": "22fff4742332e108c443dba69671c1fe"
+      "checksum": "c70eebf2c783f489bfac8ce528babbd9"
     },
     "app.py": {
-      "checksum": "58f06c327e109760ea673d3255b11597"
+      "checksum": "5026ce57368247aa0d74e560c4555835"
     },
     "bloodbank_qc/__init__.py": {
-      "checksum": "7a32d398151717bd3163ad8a9ef1e137"
-    },
-    "bloodbank_qc/__pycache__/__init__.cpython-312.pyc": {
-      "checksum": "4029a9965d7ef74ea56e4729d7b48bba"
-    },
-    "bloodbank_qc/__pycache__/analyze.cpython-312.pyc": {
-      "checksum": "3d5f09d47c8a440dc8bd0e8c722a3987"
-    },
-    "bloodbank_qc/__pycache__/capability.cpython-312.pyc": {
-      "checksum": "b32df46539d8b422be77de3f0b4d48e7"
-    },
-    "bloodbank_qc/__pycache__/reliability.cpython-312.pyc": {
-      "checksum": "d14c13a143789bb88fa415de25154c88"
-    },
-    "bloodbank_qc/__pycache__/spc.cpython-312.pyc": {
-      "checksum": "293d973a57867c67efbf8ae033a2b1bf"
-    },
-    "bloodbank_qc/__pycache__/specs.cpython-312.pyc": {
-      "checksum": "fd37542fd650c52725ca58d80096456c"
-    },
-    "bloodbank_qc/__pycache__/system.cpython-312.pyc": {
-      "checksum": "d2eae93c72ce3af9cf657c99eadf6074"
+      "checksum": "1e75b345d10e55295acd3b93a495b078"
     },
     "bloodbank_qc/analyze.py": {
-      "checksum": "1e9aa02026798c1dc22f57c3888acde1"
+      "checksum": "75276eee71b4cb6fef59d6b462818584"
     },
     "bloodbank_qc/capability.py": {
-      "checksum": "327fbb4e5907ffb463688bbe8ef91f49"
+      "checksum": "4518c2f04708488708681f4d3d2ffc89"
     },
     "bloodbank_qc/reliability.py": {
-      "checksum": "47a4d96ae96f348d1f714ff1fbaf2159"
+      "checksum": "2833031358db7ed137065656adad7aa1"
     },
     "bloodbank_qc/spc.py": {
-      "checksum": "19fec08b2af47e1b6806fb452d22dbcb"
+      "checksum": "2e0a0aae9824b08fa7a91b1bfbf65967"
     },
     "bloodbank_qc/specs.py": {
-      "checksum": "f15460b1d5ca2434629f9969c56d4857"
+      "checksum": "f5d29603f60244c1b5a6d0ae650ce8f9"
     },
     "bloodbank_qc/system.py": {
-      "checksum": "5d7adc4506b81d7a2d2da18e5d7b2b07"
+      "checksum": "901336094b2fa1ec4fa51d6b4515ef95"
     },
     "data/README.md": {
-      "checksum": "2bf06486764375d747b64b8decda2bfd"
+      "checksum": "f95a56c565c4ec8cea4cf1450cfbabc1"
     },
     "data/generator_failure/generator_log.csv": {
-      "checksum": "7ea5d924998ebcbfb3dcf66438e90de1"
+      "checksum": "a0de6e8d73e71fe958fa139cbfa456a0"
     },
     "data/generator_failure/temperature_log.csv": {
-      "checksum": "354a05dae5e48489315efbc0519cbbc3"
+      "checksum": "471a0fd7b9a9c0ed71d865ee602167f9"
     },
     "data/generator_failure/units.csv": {
-      "checksum": "e2d32aa5bbfdb75b72aee9a1396be43a"
+      "checksum": "c3dbae746813a853858e68d7db3968db"
     },
     "data/normal_operation/generator_log.csv": {
-      "checksum": "851839091e6c38ec3dc387e15993c47a"
+      "checksum": "218d37c4fd262b8d2f0feae923291595"
     },
     "data/normal_operation/temperature_log.csv": {
-      "checksum": "354a05dae5e48489315efbc0519cbbc3"
+      "checksum": "471a0fd7b9a9c0ed71d865ee602167f9"
     },
     "data/normal_operation/units.csv": {
-      "checksum": "e2d32aa5bbfdb75b72aee9a1396be43a"
+      "checksum": "c3dbae746813a853858e68d7db3968db"
     },
     "data/temperature_degradation/generator_log.csv": {
-      "checksum": "851839091e6c38ec3dc387e15993c47a"
+      "checksum": "218d37c4fd262b8d2f0feae923291595"
     },
     "data/temperature_degradation/temperature_log.csv": {
-      "checksum": "aa9a7eda649a5c5ebf5f4e3e5a18cd15"
+      "checksum": "e14c0c0535cdf48c57f15a1a49932531"
     },
     "data/temperature_degradation/units.csv": {
-      "checksum": "e2d32aa5bbfdb75b72aee9a1396be43a"
+      "checksum": "c3dbae746813a853858e68d7db3968db"
     },
     "deployme.sh": {
-      "checksum": "f90717cba0b970a6eae1e4a23cbb2d92"
+      "checksum": "4d59eb2ddcaf7e7b41ac8257f0fdf179"
     },
     "manifestme.sh": {
-      "checksum": "33706ce02dd8309d1162268671a3a795"
+      "checksum": "051b06ccdac24b40b62a0573219e1dbc"
     },
     "pytest.ini": {
-      "checksum": "ed7e85ab42aa5ae8e0f2d1804aec28b3"
+      "checksum": "e0696ad1dc7a2aa8f51b13c33f4dde63"
     },
     "requirements-dev.txt": {
-      "checksum": "b69a636a81847fdd603931e5b5dd6485"
+      "checksum": "bb88252f620179af0af91d394437c934"
     },
     "static/assets/index-BY6MjYsH.js": {
       "checksum": "05104c8472fac90af38d2aac10515f96"
@@ -140,7 +104,7 @@
       "checksum": "53bcba4715bd51ae8bdc8ff78b1dffa7"
     },
     "testme.sh": {
-      "checksum": "0ec0d511d4616b1ec83f913a96a70252"
+      "checksum": "442efbb14cf67ed00746f432bbb66360"
     }
   }
 }

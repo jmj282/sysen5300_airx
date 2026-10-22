@@ -109,7 +109,8 @@ tasks:
     owner: "Owyn (Claude Code)"
     started_at: "2026-10-22"
     owns: [".github/workflows/", ".github/scripts/", "app/manifest.json", "app/.python-version",
-           "app/api/manifest.json", "app/api/.python-version", "app/api/app.py", "app/api/manifestme.sh", "app/api/tests/test_api.py", ".gitignore"]
+           "app/api/manifest.json", "app/api/.python-version", "app/api/app.py", "app/api/manifestme.sh", "app/api/tests/test_api.py", ".gitignore",
+           ".gitattributes", "app/api/data/", "app/api/static/"]
     notes: >
       Load the connect-publish skill. Copy ONE workflow for your stack from
       .claude/skills/connect-publish/workflows/ to .github/workflows/ and the

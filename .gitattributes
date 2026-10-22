@@ -1,2 +1,6 @@
 # Shell scripts must keep Unix line endings, or Git Bash on Windows cannot run them.
 *.sh text eol=lf
+# The deployed app and its data keep Unix line endings, so manifest.json's per-file checksums
+# match what GitHub Actions uploads (see .claude/skills/connect-publish/README.md).
+app/api/** text=auto eol=lf
+data/** text=auto eol=lf
