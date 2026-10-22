@@ -13,6 +13,9 @@ import Overview from './pages/Overview.jsx'
 import Temperature from './pages/Temperature.jsx'
 import Upload from './pages/Upload.jsx'
 
+// The opening crawl is hidden for now. Set to true to bring it back (components/Crawl.jsx is unchanged).
+const SHOW_CRAWL = false
+
 const PAGES = [
   ['overview', 'Overview'],
   ['temperature', 'Temperature'],
@@ -214,7 +217,7 @@ export default function App() {
         {!report && !error && !['upload', 'methods', 'about'].includes(page) ? <div className="loading">Analyzing…</div> : null}
       </main>
 
-      <Crawl />
+      {SHOW_CRAWL ? <Crawl /> : null}
 
       <footer>
         Team AirX · SYSEN 5300 Six Sigma Hackathon (DL Challenge, Blood Banks prompt) · statistics from the bloodbank_qc Python library ·{' '}
