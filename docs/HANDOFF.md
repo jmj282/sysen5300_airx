@@ -12,7 +12,7 @@ For the next AI agent (or teammate) picking this up. Read this, then [`SPEC.md`]
 | REST API | `app/api/app.py` | done, runs locally (`app/api/testme.sh`) |
 | Dashboard | `app/web/` | done, runs locally (`app/web/testme.sh`) |
 | Test data + codebook | `data/` | done (seed 5300) |
-| Demo walkthrough | `demo/README.md`, `docs/WALKTHROUGH.md` + `docs/images/walkthrough/` | done; the team records an OBS video separately. Retake screenshots after UI changes |
+| Demo walkthrough | `demo/README.md`, `docs/WALKTHROUGH.md` + `docs/images/walkthrough/` | done; this is the demonstration (no video). Retake screenshots after UI changes |
 | README / function docs | `README.md`, `app/api/README.md`, `app/web/README.md` | done; needs a teammate fresh-clone check |
 | Deploy (H-06) | `app/api/` (+ `manifest.json`, `data/`, `static/`), `.github/workflows/deploy-fastapi.yml` | **live**: public URL in `README.md` (logged-out checks return 200). Auto-redeploy Action waits on the repo secrets and a merge to `main` |
 | Devpost + Canvas submission (H-08) | – | team; due Fri Oct 23, 3 PM ET (1 PM MT) |

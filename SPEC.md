@@ -64,7 +64,7 @@ Fixed for every team:
 - `README.md` says what the tool does, for whom, every input and parameter, how to run it in one
   command, and walks through the demo on each test dataset.
 - Public GitHub repo; a fresh clone runs `testme` and the tests pass with no extra steps.
-- Submit on Devpost: the repo link plus a demo (OBS video recorded by the team).
+- Submit on Devpost: the repo link plus the demonstration: the guided tour `demo/README.md` and the screenshot walkthrough `docs/WALKTHROUGH.md` (Ed #196: these count as the demonstration; no video).
 
 ## 9. Out of scope
 - Default: logins, databases, real customer data, a second statistic before the first one is tested.
