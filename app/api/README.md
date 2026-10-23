@@ -10,7 +10,7 @@ thin FastAPI layer over it. The library never imports FastAPI, so every statisti
 # interactive docs:  http://localhost:8000/docs
 ```
 
-Tests only: `../../.venv/bin/python -m pytest` (from this folder). 59 tests (listed in [docs/TESTS.md](../../docs/TESTS.md)): course known answers
+Tests only: `../../.venv/bin/python -m pytest` (from this folder). 60 tests (listed in [docs/TESTS.md](../../docs/TESTS.md)): course known answers
 (Fraser's `daily_production.csv`, `onsen.csv`, docstring and lecture examples), degenerate cases
 (constant data, zero failures, n = 1) and a planted signal for every run rule.
 
@@ -18,7 +18,7 @@ Tests only: `../../.venv/bin/python -m pytest` (from this folder). 59 tests (lis
 
 | Method | Path | Input | Returns |
 |---|---|---|---|
-| GET | `/` | – | health check |
+| GET | `/` | – | the dashboard when its build is bundled in `static/` (the deployed app); otherwise a JSON health check |
 | GET | `/specs` | – | storage specification limits per product type |
 | GET | `/datasets` | – | the three bundled scenarios |
 | GET | `/datasets/{scenario}/{file}` | – | download a sample CSV |
@@ -96,8 +96,17 @@ Returns `None`, never a made-up number, when an index is undefined (σ = 0, or C
 
 ## Deploy (Posit Connect)
 
+This folder deploys as ONE app: the API, plus the built dashboard served at `/`. Live URL: see the
+[main README](../../README.md).
+
 ```bash
 pip install rsconnect-python
-./manifestme.sh      # copies data/ scenarios in, writes manifest.json
+./manifestme.sh      # copies data/ in, builds ../web (needs Node.js) into static/, writes manifest.json
 ./deployme.sh        # needs CONNECT_SERVER and CONNECT_API_KEY in the gitignored ../../.env
 ```
+
+Usually you don't run `deployme.sh`: every push to `main` that changes `app/api/` redeploys through
+GitHub Actions (`.github/workflows/deploy-fastapi.yml`), which uploads exactly the committed files. So
+after changing the dashboard, the data or `requirements.txt`, run `./manifestme.sh` and commit
+`app/api/` (`manifest.json`, `data/`, `static/`). Both routes update the same app (`--app-id` in
+`deployme.sh`, `CONTENT_GUID` in the workflow), so the URL never changes.

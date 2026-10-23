@@ -9,7 +9,7 @@ number is fetched from the API (`src/api.js` is the only file that knows the API
 ./testme.sh        # npm ci (first time), vitest, then http://localhost:5173
 ```
 
-The API must be running (`../api/testme.sh`). To point at a deployed API, create `.env.local`:
+The API must be running (`../api/testme.sh`). To point a local dashboard at another API, create `.env.local`:
 
 ```
 VITE_API_URL=https://your-api-address
@@ -41,6 +41,14 @@ src/styles.css          dark theme
 ```
 
 ## Build and deploy
+
+The live dashboard is not deployed from here. `../api/manifestme.sh` builds it with `VITE_API_URL=.`
+(call the API at the same address) and copies the build into `../api/static/`, and the API serves it at
+`/`: one Posit Connect app, one URL. After changing the dashboard, run `../api/manifestme.sh` and commit
+`app/api/` (see [app/api/README.md](../api/README.md#deploy-posit-connect)).
+
+The scripts below deploy the dashboard as a separate static app instead. They still work but are not
+used; that route needs `VITE_API_URL` set to the deployed API's address before building.
 
 ```bash
 ./manifestme.sh    # npm run build + rsconnect write-manifest html dist  (set VITE_API_URL first)

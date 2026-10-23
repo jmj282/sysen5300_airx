@@ -18,6 +18,15 @@ def test_root_and_datasets():
     assert all(d["available"] for d in ds)
 
 
+def test_root_serves_bundled_dashboard(tmp_path, monkeypatch):
+    # Deployed bundle: / is the dashboard; the API routes still answer JSON.
+    (tmp_path / "index.html").write_text("<!doctype html><title>AirX</title>")
+    monkeypatch.setattr("app.WEB_DIR", tmp_path)
+    r = client.get("/")
+    assert r.headers["content-type"].startswith("text/html") and "AirX" in r.text
+    assert client.get("/datasets").json()[0]["id"] == "normal_operation"
+
+
 def test_analyze_scenario_matches_library():
     r = client.get("/analyze/temperature_degradation").json()
     st = {u["unit_id"]: u["status"] for u in r["units"]}

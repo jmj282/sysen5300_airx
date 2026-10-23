@@ -29,3 +29,4 @@ table with a date and who decided.
 | 2026-10-21 | Q8: the team records the demo video with OBS | Carter |
 | 2026-10-21 | Q9: Ed #196 (Fraser): a video, screenshots in docs, or a guided tour through test datasets all count as the demonstration | Ed |
 | 2026-10-21 | Q1 open: the team uses Posit **Cloud** (browser IDE). The Posit **Connect** publisher key for public deployment has not been confirmed for DL. Build to run locally with one command; deploy when a key or host is settled | Carter |
+| 2026-10-22 | Q1 answered: course Posit Connect server and a publisher key received (key kept in a gitignored `.env` and GitHub repo secrets, never in files). Deployed `app/api/` (API + built dashboard) as one public app, no login required: see the Live URL in `README.md`. GitHub Actions redeploys on push to `main` | Owyn |

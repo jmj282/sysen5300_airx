@@ -17,7 +17,10 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# AirX: scenario copy made by app/api/manifestme.sh for deployment (source of truth is data/)
-app/api/data/
+# AirX: app/api/data/ and app/api/static/ are COMMITTED on purpose. They are the deploy copies of
+# data/ and the built app/web/ dashboard that GitHub Actions uploads to Posit Connect. After changing
+# either, run app/api/manifestme.sh and commit app/api/ (manifest.json, data/, static/).
+# rsconnect's local deploy record (holds the server address; keep it on your machine)
+app/api/rsconnect-python/
 node_modules/
 dist/
